@@ -4,6 +4,9 @@
  */
 package App;
 
+import Lib.Options;
+import Lib.SongLoader;
+import Services.Database;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -12,30 +15,36 @@ import java.awt.event.KeyEvent;
  *
  * @author Jayvee
  */
+
+/**
+ * TODO:
+ * - Fix
+ */
 public class Main extends javax.swing.JFrame {
     enum KEY_MAP {
         DEFAULT(null),
         LEFT("Left"),
-        RIGHT("S"),
-        UP("SD"),
-        DOWN("asd");
+        RIGHT("Right"),
+        UP("Up"),
+        DOWN("Down");
         
         private final String keymap;
         KEY_MAP(String map) {
             this.keymap = map;
         }
     };
-    private KEY_MAP currentButton = KEY_MAP.DEFAULT; // Initialze for default val
+    private KEY_MAP currentButton = KEY_MAP.DEFAULT; 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
-    private int currentResolution;
-    private String currentTheme;
-    private String currentFont;
+    private Options options; // Handler for logic during method listener calls
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        Database database = new Database();
+        options = new Options(this);
     }
 
     /**
@@ -58,7 +67,8 @@ public class Main extends javax.swing.JFrame {
         optionsBtn = new javax.swing.JButton();
         exitBtn = new javax.swing.JButton();
         userLoginPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        signupBtn = new javax.swing.JButton();
+        loginBtn = new javax.swing.JButton();
         optionsPanel = new javax.swing.JPanel();
         topOptions = new javax.swing.JPanel();
         audioCalibPanel = new javax.swing.JPanel();
@@ -80,7 +90,7 @@ public class Main extends javax.swing.JFrame {
         themeComboBox = new javax.swing.JComboBox<>();
         fontPanel = new javax.swing.JPanel();
         fontText = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        fontComboBox = new javax.swing.JComboBox<>();
         optionsNav = new javax.swing.JPanel();
         optionsCancel = new javax.swing.JButton();
         optionsSave = new javax.swing.JButton();
@@ -153,11 +163,18 @@ public class Main extends javax.swing.JFrame {
         mainMenu.add(mainPanel, java.awt.BorderLayout.CENTER);
 
         userLoginPanel.setFocusable(false);
+        userLoginPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jButton1.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        jButton1.setText("LOGIN");
-        jButton1.setFocusable(false);
-        userLoginPanel.add(jButton1);
+        signupBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        signupBtn.setText("SIGNUP");
+        signupBtn.addActionListener(this::loginActionPerformed);
+        userLoginPanel.add(signupBtn);
+
+        loginBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        loginBtn.setText("LOGIN");
+        loginBtn.setFocusable(false);
+        loginBtn.addActionListener(this::loginActionPerformed);
+        userLoginPanel.add(loginBtn);
 
         mainMenu.add(userLoginPanel, java.awt.BorderLayout.SOUTH);
 
@@ -232,9 +249,9 @@ public class Main extends javax.swing.JFrame {
         fontText.setText("Font");
         fontPanel.add(fontText);
 
-        jComboBox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SansSerif (Default)", "Monospaced", "Serif", "Arial", "Impact" }));
-        fontPanel.add(jComboBox1);
+        fontComboBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        fontComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SansSerif (Default)", "Monospaced", "Serif", "Arial", "Impact" }));
+        fontPanel.add(fontComboBox);
 
         visualOptionPanel.add(fontPanel);
 
@@ -321,15 +338,15 @@ public class Main extends javax.swing.JFrame {
     private void mainMenuActionListener(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuActionListener
         // TODO add your handling code here:
         if (evt.getSource() == playBtn) {
-            System.out.println("CHANGING PANEL TO -> play panel | FROM -> main menu");
+            System.out.println("[Changed-Panel]: Main Menu -> Level Select");
             this.swapCard("levelPanel");
             playPanel.setFocusable(true);
             playPanel.requestFocusInWindow();
         } else if (evt.getSource() == optionsBtn) {
-            System.out.println("CHANGING PANEL TO -> options panel | FROM -> main menu");
+            System.out.println("[Changed-Panel]: Main Menu -> Options");
             this.swapCard("optionsPanel");
         } else if (evt.getSource() == exitBtn) {
-            System.out.println("EXITING PROGRAM...");
+            System.out.println("[Exit]: Program has been terminated");
             System.exit(0);
         }
     }//GEN-LAST:event_mainMenuActionListener
@@ -337,128 +354,38 @@ public class Main extends javax.swing.JFrame {
     private void optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsActionPerformed
         // TODO add your handling code here:
         if (evt.getSource() == optionsCancel) {
-            System.out.println("RETURNING TO -> Main Menu | FROM -> OPTIONS");
+            System.out.println("[Changed-Panel]: Options -> Main Menu");
             this.swapCard("mainMenu");
         } else if (evt.getSource() == optionsSave) {
-            System.out.println("SAVING OPTIONS...");
+            System.out.println("[Update]: Saving option configuration");
             
-            changeResolution();
-            changeTheme();
-            changeFont();
+            options.changeTheme(themeComboBox);
+            options.changeResolution(resolutionComboBox);
+            options.changeFont(fontComboBox);
             
             this.swapCard("mainMenu");
-            System.out.println("RETURNING TO -> Main Menu | FROM -> OPTIONS");
+            System.out.println("[Changed-Panel]: Options -> Main Menu");
         }
     }//GEN-LAST:event_optionsActionPerformed
 
     private void levelSelectBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelSelectBackActionPerformed
         // TODO add your handling code here:
-        System.out.println("RETURNING TO -> Main Menu | FROM -> level select");
+        System.out.println("[Changed-Panel]: Level Select -> Main Menu");
         this.swapCard("mainMenu");
     }//GEN-LAST:event_levelSelectBackActionPerformed
+
+    private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
+        // TODO add your handling code here:
+        if (evt.getSource() == loginBtn) {
+            System.out.println("[Notice]: Attempting to login to an account.");
+        } else if (evt.getSource() == signupBtn) {
+            System.out.println("[Notice]: Creating a new account.");
+        }
+    }//GEN-LAST:event_loginActionPerformed
 
     public void swapCard(String name) {
         CardLayout card = (CardLayout) masterPanel.getLayout();
         card.show(masterPanel, name);
-    }
-    
-    public void changeTheme() {
-        String theme = (String) themeComboBox.getSelectedItem();
-        if (theme == null || theme.equals("Default")) return;
-
-        java.awt.Color bgColor;
-        java.awt.Color fgColor;
-
-        switch (theme) {
-            case "Midnight Dark":
-                bgColor = new java.awt.Color(43, 43, 43);
-                fgColor = java.awt.Color.WHITE;
-                break;
-            case "Classic Light":
-                bgColor = new java.awt.Color(240, 240, 240);
-                fgColor = new java.awt.Color(30, 30, 30);
-                break;
-            case "Retro Synthwave":
-                bgColor = new java.awt.Color(20, 10, 40);
-                fgColor = new java.awt.Color(0, 255, 204);
-                break;
-            case "Cyberpunk Neon":
-                bgColor = java.awt.Color.BLACK;
-                fgColor = new java.awt.Color(255, 255, 0); 
-                break;
-            case "Vaporwave Sunset":
-                bgColor = new java.awt.Color(255, 182, 193); 
-                fgColor = new java.awt.Color(138, 43, 226);  
-                break;
-            default:
-                return;
-        }
-
-        applyColorsRecursively(this.getContentPane(), bgColor, fgColor);
-        javax.swing.SwingUtilities.updateComponentTreeUI(this);
-    }
-    
-    public void changeResolution() {
-        String res = (String) resolutionComboBox.getSelectedItem();
-        if (res == null || res.equals("Select A Resolution")) return;
-
-        int width = this.getWidth();
-        int height = this.getHeight();
-
-        switch (res) {
-            case "1280x720": width = 1280; height = 720; break;
-            case "1024x768": width = 1024; height = 768; break;
-            case "960x540":  width = 960;  height = 540; break;
-            case "800x600":  width = 800;  height = 600; break;
-            case "640x480":  width = 640;  height = 480; break;
-        }
-        
-        this.setSize(width, height);
-        this.setLocationRelativeTo(null); // Keeps the window centered after resizing
-    }
-    
-    public void changeFont() {
-        String fontChoice = (String) jComboBox1.getSelectedItem();
-        if (fontChoice == null) return;
-
-        // Strip the " (Default)" tag if SansSerif is selected so the Font class can read it
-        String fontName = fontChoice.replace(" (Default)", "");
-
-        applyFontRecursively(this.getContentPane(), fontName);
-        javax.swing.SwingUtilities.updateComponentTreeUI(this);
-    }
-    
-    private void applyColorsRecursively(java.awt.Container container, java.awt.Color bg, java.awt.Color fg) {
-        container.setBackground(bg);
-        container.setForeground(fg);
-        
-        for (java.awt.Component c : container.getComponents()) {
-            c.setBackground(bg);
-            c.setForeground(fg);
-            
-            if (c instanceof java.awt.Container) {
-                applyColorsRecursively((java.awt.Container) c, bg, fg);
-            }
-        }
-    }
-    
-    private void applyFontRecursively(java.awt.Container container, String fontName) {
-        java.awt.Font currentFont = container.getFont();
-        if (currentFont != null) {
-            container.setFont(new java.awt.Font(fontName, currentFont.getStyle(), currentFont.getSize()));
-        }
-        
-        for (java.awt.Component c : container.getComponents()) {
-            java.awt.Font cFont = c.getFont();
-            if (cFont != null) {
-                // Preserves the existing size and style of each label/button while swapping the family
-                c.setFont(new java.awt.Font(fontName, cFont.getStyle(), cFont.getSize()));
-            }
-            
-            if (c instanceof java.awt.Container) {
-                applyFontRecursively((java.awt.Container) c, fontName);
-            }
-        }
     }
     // TODO: Insert Audio Change
     
@@ -492,10 +419,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel bottomBtns;
     private javax.swing.JPanel bottomMain;
     private javax.swing.JButton exitBtn;
+    private javax.swing.JComboBox<String> fontComboBox;
     private javax.swing.JPanel fontPanel;
     private javax.swing.JLabel fontText;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel leaderboardPanel;
@@ -503,6 +429,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel levelSelectPanel;
     private javax.swing.JPanel levelSettingsPanel;
     private javax.swing.JPanel levelsPanel;
+    private javax.swing.JButton loginBtn;
     private javax.swing.JPanel mainLevelSelect;
     private javax.swing.JPanel mainMenu;
     private javax.swing.JPanel mainPanel;
@@ -526,6 +453,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel sfxVolumePanel;
     private javax.swing.JSlider sfxVolumeSlider;
     private javax.swing.JLabel sfxVolumeText;
+    private javax.swing.JButton signupBtn;
     private javax.swing.JComboBox<String> themeComboBox;
     private javax.swing.JPanel themePanel;
     private javax.swing.JLabel themeText;
