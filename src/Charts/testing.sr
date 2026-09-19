@@ -1,0 +1,9 @@
+[METADATA]
+title="<title-name>"
+bpm=<bpm-number-int>
+audioFile="<file-name>.<extension>"
+
+[NOTES]
+<beatTimeInMs>,<correctKeyBindMap>
+<beatTimeInMs>,<correctKeyBindMap>
+<beatTimeInMs>,<correctKeyBindMap>
