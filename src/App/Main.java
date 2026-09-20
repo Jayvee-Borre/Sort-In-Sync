@@ -5,12 +5,20 @@
 package App;
 
 import Lib.Options;
-import Lib.SongLoader;
 import Services.Database;
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.event.KeyEvent;
-
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import java.awt.Color;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.Component;
+import Lib.KeyMapper;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import Lib.SongLoader;
 /**
  *
  * @author Jayvee
@@ -21,30 +29,19 @@ import java.awt.event.KeyEvent;
  * - Fix
  */
 public class Main extends javax.swing.JFrame {
-    enum KEY_MAP {
-        DEFAULT(null),
-        LEFT("Left"),
-        RIGHT("Right"),
-        UP("Up"),
-        DOWN("Down");
-        
-        private final String keymap;
-        KEY_MAP(String map) {
-            this.keymap = map;
-        }
-    };
-    private KEY_MAP currentButton = KEY_MAP.DEFAULT; 
+    private boolean userExists;
+    private KeyMapper keyMapper = new KeyMapper();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
-    private Options options; // Handler for logic during method listener calls
+    private Options options = new Options(this); // Handler for logic during method listener calls
+    private Database database = new Database();
+    
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        Database database = new Database();
-        options = new Options(this);
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -56,6 +53,7 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         masterPanel = new javax.swing.JPanel();
         mainMenu = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
@@ -67,8 +65,13 @@ public class Main extends javax.swing.JFrame {
         optionsBtn = new javax.swing.JButton();
         exitBtn = new javax.swing.JButton();
         userLoginPanel = new javax.swing.JPanel();
-        signupBtn = new javax.swing.JButton();
+        ulpRight = new javax.swing.JPanel();
+        notLoggedInPanel = new javax.swing.JPanel();
         loginBtn = new javax.swing.JButton();
+        signupBtn = new javax.swing.JButton();
+        loggedInPanel = new javax.swing.JPanel();
+        currentUserText = new javax.swing.JLabel();
+        signoutBtn = new javax.swing.JButton();
         optionsPanel = new javax.swing.JPanel();
         topOptions = new javax.swing.JPanel();
         audioCalibPanel = new javax.swing.JPanel();
@@ -100,14 +103,41 @@ public class Main extends javax.swing.JFrame {
         topLevelSelect = new javax.swing.JPanel();
         levelBackBtn = new javax.swing.JButton();
         mainLevelSelect = new javax.swing.JPanel();
-        levelsPanel = new javax.swing.JPanel();
-        levelSettingsPanel = new javax.swing.JPanel();
         leaderboardPanel = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        levelsPanel = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        levels = new javax.swing.JPanel();
+        level1 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        level2 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        level3 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        level4 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        level5 = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        levelSettingsPanel = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        difficulty = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        easyRB = new javax.swing.JRadioButton();
+        mediumRB = new javax.swing.JRadioButton();
+        hardRB = new javax.swing.JRadioButton();
+        jPanel8 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SORT IN SYNC");
         setFocusable(false);
-        setPreferredSize(new java.awt.Dimension(400, 400));
+        setPreferredSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
         masterPanel.setFocusable(false);
@@ -165,16 +195,34 @@ public class Main extends javax.swing.JFrame {
         userLoginPanel.setFocusable(false);
         userLoginPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        signupBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        signupBtn.setText("SIGNUP");
-        signupBtn.addActionListener(this::loginActionPerformed);
-        userLoginPanel.add(signupBtn);
+        ulpRight.setLayout(new java.awt.CardLayout());
 
         loginBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         loginBtn.setText("LOGIN");
         loginBtn.setFocusable(false);
         loginBtn.addActionListener(this::loginActionPerformed);
-        userLoginPanel.add(loginBtn);
+        notLoggedInPanel.add(loginBtn);
+
+        signupBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        signupBtn.setText("SIGNUP");
+        signupBtn.setFocusable(false);
+        signupBtn.addActionListener(this::loginActionPerformed);
+        notLoggedInPanel.add(signupBtn);
+
+        ulpRight.add(notLoggedInPanel, "notLogged");
+
+        currentUserText.setFont(new java.awt.Font("Segoe UI", 2, 10)); // NOI18N
+        loggedInPanel.add(currentUserText);
+
+        signoutBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        signoutBtn.setText("Sign Out");
+        signoutBtn.setFocusable(false);
+        signoutBtn.addActionListener(this::signoutBtnActionPerformed);
+        loggedInPanel.add(signoutBtn);
+
+        ulpRight.add(loggedInPanel, "logged");
+
+        userLoginPanel.add(ulpRight);
 
         mainMenu.add(userLoginPanel, java.awt.BorderLayout.SOUTH);
 
@@ -299,9 +347,161 @@ public class Main extends javax.swing.JFrame {
         levelSelectPanel.add(topLevelSelect, java.awt.BorderLayout.NORTH);
 
         mainLevelSelect.setLayout(new java.awt.GridLayout(1, 3));
-        mainLevelSelect.add(levelsPanel);
-        mainLevelSelect.add(levelSettingsPanel);
+
+        leaderboardPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("LEADERBOARDS (Top 10)");
+        leaderboardPanel.add(jLabel3, java.awt.BorderLayout.NORTH);
+        leaderboardPanel.add(jPanel1, java.awt.BorderLayout.CENTER);
+
         mainLevelSelect.add(leaderboardPanel);
+
+        levelsPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("LEVELS");
+        levelsPanel.add(jLabel4, java.awt.BorderLayout.NORTH);
+
+        levels.setLayout(new java.awt.GridLayout(5, 1));
+
+        level1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                levelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                levelMouseEnter(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                levelMouseExit(evt);
+            }
+        });
+
+        jLabel6.setText("Canon");
+        level1.add(jLabel6);
+
+        levels.add(level1);
+
+        level2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                levelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                levelMouseEnter(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                levelMouseExit(evt);
+            }
+        });
+
+        jLabel7.setText("Song 2");
+        level2.add(jLabel7);
+
+        levels.add(level2);
+
+        level3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                levelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                levelMouseEnter(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                levelMouseExit(evt);
+            }
+        });
+
+        jLabel8.setText("Song 3");
+        level3.add(jLabel8);
+
+        levels.add(level3);
+
+        level4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                levelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                levelMouseEnter(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                levelMouseExit(evt);
+            }
+        });
+
+        jLabel9.setText("Song 4");
+        level4.add(jLabel9);
+
+        levels.add(level4);
+
+        level5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                levelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                levelMouseEnter(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                levelMouseExit(evt);
+            }
+        });
+
+        jLabel10.setText("Song 5");
+        level5.add(jLabel10);
+
+        levels.add(level5);
+
+        levelsPanel.add(levels, java.awt.BorderLayout.CENTER);
+
+        mainLevelSelect.add(levelsPanel);
+
+        levelSettingsPanel.setLayout(new java.awt.BorderLayout());
+
+        jPanel2.setLayout(new java.awt.GridLayout(3, 1));
+
+        jPanel3.setLayout(new java.awt.BorderLayout());
+        jPanel2.add(jPanel3);
+
+        difficulty.setLayout(new java.awt.GridLayout(2, 1));
+        jPanel2.add(difficulty);
+
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jPanel4.setLayout(new java.awt.BorderLayout());
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setText("Choose Difficulty");
+        jPanel6.add(jLabel11);
+
+        jPanel4.add(jPanel6, java.awt.BorderLayout.NORTH);
+
+        buttonGroup1.add(easyRB);
+        easyRB.setText("EASY");
+        jPanel7.add(easyRB);
+
+        buttonGroup1.add(mediumRB);
+        mediumRB.setText("MEDIUM");
+        jPanel7.add(mediumRB);
+
+        buttonGroup1.add(hardRB);
+        hardRB.setText("HARD");
+        jPanel7.add(hardRB);
+
+        jPanel4.add(jPanel7, java.awt.BorderLayout.CENTER);
+
+        jPanel5.add(jPanel4, java.awt.BorderLayout.CENTER);
+
+        jButton1.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        jButton1.setText("PLAY");
+        jButton1.setFocusable(false);
+        jPanel8.add(jButton1);
+
+        jPanel5.add(jPanel8, java.awt.BorderLayout.SOUTH);
+
+        jPanel2.add(jPanel5);
+
+        levelSettingsPanel.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        mainLevelSelect.add(levelSettingsPanel);
 
         levelSelectPanel.add(mainLevelSelect, java.awt.BorderLayout.CENTER);
 
@@ -315,36 +515,19 @@ public class Main extends javax.swing.JFrame {
     private void playPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_playPanelKeyPressed
         // TODO add your handling code here:
         int key = evt.getKeyCode();
-        
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
-            switch (key) {
-                case KeyEvent.VK_UP:
-                    currentButton = KEY_MAP.UP;
-                    break;
-                case KeyEvent.VK_DOWN:
-                    currentButton = KEY_MAP.DOWN;
-                    break;
-                case KeyEvent.VK_LEFT:
-                    currentButton = KEY_MAP.LEFT;
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    currentButton = KEY_MAP.RIGHT;
-                    break;
-            }
-        }
-        System.out.println("Pressing: " + currentButton);
+        keyMapper.validateKey(key);
     }//GEN-LAST:event_playPanelKeyPressed
 
     private void mainMenuActionListener(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuActionListener
         // TODO add your handling code here:
         if (evt.getSource() == playBtn) {
             System.out.println("[Changed-Panel]: Main Menu -> Level Select");
-            this.swapCard("levelPanel");
+            this.swapCard(masterPanel, "levelPanel");
             playPanel.setFocusable(true);
             playPanel.requestFocusInWindow();
         } else if (evt.getSource() == optionsBtn) {
             System.out.println("[Changed-Panel]: Main Menu -> Options");
-            this.swapCard("optionsPanel");
+            this.swapCard(masterPanel, "optionsPanel");
         } else if (evt.getSource() == exitBtn) {
             System.out.println("[Exit]: Program has been terminated");
             System.exit(0);
@@ -355,7 +538,7 @@ public class Main extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getSource() == optionsCancel) {
             System.out.println("[Changed-Panel]: Options -> Main Menu");
-            this.swapCard("mainMenu");
+            this.swapCard(masterPanel, "mainMenu");
         } else if (evt.getSource() == optionsSave) {
             System.out.println("[Update]: Saving option configuration");
             
@@ -363,7 +546,7 @@ public class Main extends javax.swing.JFrame {
             options.changeResolution(resolutionComboBox);
             options.changeFont(fontComboBox);
             
-            this.swapCard("mainMenu");
+            this.swapCard(masterPanel, "mainMenu");
             System.out.println("[Changed-Panel]: Options -> Main Menu");
         }
     }//GEN-LAST:event_optionsActionPerformed
@@ -371,21 +554,89 @@ public class Main extends javax.swing.JFrame {
     private void levelSelectBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelSelectBackActionPerformed
         // TODO add your handling code here:
         System.out.println("[Changed-Panel]: Level Select -> Main Menu");
-        this.swapCard("mainMenu");
+        this.swapCard(masterPanel,"mainMenu");
     }//GEN-LAST:event_levelSelectBackActionPerformed
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
         // TODO add your handling code here:
+        JTextField username = new JTextField();
+        JTextField password = new JPasswordField();
+        String pass, user;
+
+        Object[] comp = {
+            "Username:", username,
+            "Password:", password
+        };
+        
         if (evt.getSource() == loginBtn) {
             System.out.println("[Notice]: Attempting to login to an account.");
+            int option = JOptionPane.showConfirmDialog(null, comp, "Form", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                user = username.getText();
+                pass = password.getText();
+
+                System.out.println(user + " - " + pass);
+                if (database.validateLogin(user, pass)) {
+                    System.out.println("[Success]: Logged in as: " + user);
+                    // Create new user Object reference the currentUser as the user (?)
+                    currentUserText.setText("Logged in as:" + user);
+                    this.swapCard(ulpRight, "logged");
+                } else {
+                    System.out.println("[Error]: Could not successfully login.");
+                    JOptionPane.showMessageDialog(null, "Invalid username or password", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            } 
         } else if (evt.getSource() == signupBtn) {
             System.out.println("[Notice]: Creating a new account.");
+            int option = JOptionPane.showConfirmDialog(null, comp, "Form", JOptionPane.OK_CANCEL_OPTION);
+            
+            // Save it to database
+            if (option == JOptionPane.OK_OPTION) {
+                user = username.getText();
+                pass = password.getText();
+
+                System.out.println(user + " - " + pass);
+                if (database.registerUser(user, pass)) {
+                    System.out.println("Account created for: " + user);
+                    // Create new user Object.
+                    
+                } else {
+                    System.out.println("[Error]: Failed to create account.");
+                    JOptionPane.showMessageDialog(null, "User already taken or invalid input.", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            } 
         }
     }//GEN-LAST:event_loginActionPerformed
 
-    public void swapCard(String name) {
-        CardLayout card = (CardLayout) masterPanel.getLayout();
-        card.show(masterPanel, name);
+    private void signoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signoutBtnActionPerformed
+        // TODO add your handling code here:
+        int options = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Log out", JOptionPane.OK_CANCEL_OPTION);
+        if (options == JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(null, "Successfully Logged out.");
+            currentUserText.setText("");
+            this.swapCard(ulpRight, "notLogged");
+        }
+    }//GEN-LAST:event_signoutBtnActionPerformed
+
+    private void levelMouseEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseEnter
+        javax.swing.JPanel pnl = (javax.swing.JPanel) evt.getComponent();
+        pnl.setBackground(options.computeHoverColor(options.getBgColor()));
+    }//GEN-LAST:event_levelMouseEnter
+
+    private void levelMouseExit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseExit
+        javax.swing.JPanel pnl = (javax.swing.JPanel) evt.getComponent();
+        pnl.setBackground(options.getBgColor());
+    }//GEN-LAST:event_levelMouseExit
+
+    private void levelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseClicked
+        // TODO add your handling code here:
+        String comp = evt.getSource().toString();
+        System.out.println("Compontent: " + comp + " was clicked");
+    }//GEN-LAST:event_levelMouseClicked
+
+    public void swapCard(JComponent comp, String name) {
+        CardLayout card = (CardLayout) comp.getLayout();
+        card.show(comp, name);
     }
     // TODO: Insert Audio Change
     
@@ -418,25 +669,56 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel audioCalibPanel;
     private javax.swing.JPanel bottomBtns;
     private javax.swing.JPanel bottomMain;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel currentUserText;
+    private javax.swing.JPanel difficulty;
+    private javax.swing.JRadioButton easyRB;
     private javax.swing.JButton exitBtn;
     private javax.swing.JComboBox<String> fontComboBox;
     private javax.swing.JPanel fontPanel;
     private javax.swing.JLabel fontText;
+    private javax.swing.JRadioButton hardRB;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel leaderboardPanel;
+    private javax.swing.JPanel level1;
+    private javax.swing.JPanel level2;
+    private javax.swing.JPanel level3;
+    private javax.swing.JPanel level4;
+    private javax.swing.JPanel level5;
     private javax.swing.JButton levelBackBtn;
     private javax.swing.JPanel levelSelectPanel;
     private javax.swing.JPanel levelSettingsPanel;
+    private javax.swing.JPanel levels;
     private javax.swing.JPanel levelsPanel;
+    private javax.swing.JPanel loggedInPanel;
     private javax.swing.JButton loginBtn;
     private javax.swing.JPanel mainLevelSelect;
     private javax.swing.JPanel mainMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JPanel masterPanel;
+    private javax.swing.JRadioButton mediumRB;
     private javax.swing.JLabel musicVolText;
     private javax.swing.JPanel musicVolumePanel;
     private javax.swing.JSlider musicVolumeSlider;
+    private javax.swing.JPanel notLoggedInPanel;
     private javax.swing.JPanel offsetPanel;
     private javax.swing.JSpinner offsetSpinner;
     private javax.swing.JLabel offsetText;
@@ -453,6 +735,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel sfxVolumePanel;
     private javax.swing.JSlider sfxVolumeSlider;
     private javax.swing.JLabel sfxVolumeText;
+    private javax.swing.JButton signoutBtn;
     private javax.swing.JButton signupBtn;
     private javax.swing.JComboBox<String> themeComboBox;
     private javax.swing.JPanel themePanel;
@@ -460,6 +743,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel titlePanel;
     private javax.swing.JPanel topLevelSelect;
     private javax.swing.JPanel topOptions;
+    private javax.swing.JPanel ulpRight;
     private javax.swing.JPanel userLoginPanel;
     private javax.swing.JPanel visualOptionPanel;
     // End of variables declaration//GEN-END:variables
