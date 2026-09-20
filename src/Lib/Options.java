@@ -5,6 +5,7 @@
 package Lib;
 
 import App.Main;
+import java.awt.Color;
 import javax.swing.JComboBox;
 
 /**
@@ -13,17 +14,18 @@ import javax.swing.JComboBox;
  */
 public class Options {
     private final Main window;
+    private Color bgColor;
+    private Color fgColor;
     
     public Options(Main window) {
         this.window = window;
+        this.bgColor = window.getContentPane().getBackground();
+        this.fgColor = window.getContentPane().getForeground();
     }
     
     public void changeTheme(JComboBox item) {
         String theme = (String) item.getSelectedItem();
         if (theme == null || theme.equals("Default")) return;
-
-        java.awt.Color bgColor;
-        java.awt.Color fgColor;
 
         switch (theme) {
             case "Midnight Dark":
@@ -115,5 +117,20 @@ public class Options {
                 applyFontRecursively((java.awt.Container) c, fontName);
             }
         }
+    }
+
+    public Color getBgColor() {
+        return bgColor;
+    }
+
+    public Color getFgColor() {
+        return fgColor;
+    }
+    
+    public Color computeHoverColor(Color base) {
+        int r = Math.min(255, base.getRed() + 40);
+        int g = Math.min(255, base.getGreen() + 40);
+        int b = Math.min(255, base.getBlue() + 40);
+        return new Color(r, g, b);
     }
 }
