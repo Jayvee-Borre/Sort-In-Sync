@@ -7,18 +7,8 @@ package App;
 import Lib.Options;
 import Services.Database;
 import java.awt.CardLayout;
-import java.awt.event.KeyEvent;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import java.awt.Color;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.Component;
 import Lib.KeyMapper;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import Lib.SongLoader;
 /**
  *
  * @author Jayvee
@@ -42,6 +32,10 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
+        
+        mainMenu.setMasterPanel(masterPanel);
+        optionsPanel1.setMasterPanel(masterPanel);
+        optionsPanel1.setOptions(options);
     }
 
     /**
@@ -55,48 +49,8 @@ public class Main extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         masterPanel = new javax.swing.JPanel();
-        mainMenu = new javax.swing.JPanel();
-        mainPanel = new javax.swing.JPanel();
-        titlePanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        bottomMain = new javax.swing.JPanel();
-        bottomBtns = new javax.swing.JPanel();
-        playBtn = new javax.swing.JButton();
-        optionsBtn = new javax.swing.JButton();
-        exitBtn = new javax.swing.JButton();
-        userLoginPanel = new javax.swing.JPanel();
-        ulpRight = new javax.swing.JPanel();
-        notLoggedInPanel = new javax.swing.JPanel();
-        loginBtn = new javax.swing.JButton();
-        signupBtn = new javax.swing.JButton();
-        loggedInPanel = new javax.swing.JPanel();
-        currentUserText = new javax.swing.JLabel();
-        signoutBtn = new javax.swing.JButton();
-        optionsPanel = new javax.swing.JPanel();
-        topOptions = new javax.swing.JPanel();
-        audioCalibPanel = new javax.swing.JPanel();
-        offsetPanel = new javax.swing.JPanel();
-        offsetText = new javax.swing.JLabel();
-        offsetSpinner = new javax.swing.JSpinner();
-        musicVolumePanel = new javax.swing.JPanel();
-        musicVolText = new javax.swing.JLabel();
-        musicVolumeSlider = new javax.swing.JSlider();
-        sfxVolumePanel = new javax.swing.JPanel();
-        sfxVolumeText = new javax.swing.JLabel();
-        sfxVolumeSlider = new javax.swing.JSlider();
-        visualOptionPanel = new javax.swing.JPanel();
-        screenSizePanel = new javax.swing.JPanel();
-        resolutionText = new javax.swing.JLabel();
-        resolutionComboBox = new javax.swing.JComboBox<>();
-        themePanel = new javax.swing.JPanel();
-        themeText = new javax.swing.JLabel();
-        themeComboBox = new javax.swing.JComboBox<>();
-        fontPanel = new javax.swing.JPanel();
-        fontText = new javax.swing.JLabel();
-        fontComboBox = new javax.swing.JComboBox<>();
-        optionsNav = new javax.swing.JPanel();
-        optionsCancel = new javax.swing.JButton();
-        optionsSave = new javax.swing.JButton();
+        mainMenu = new App.Panels.MainMenu();
+        optionsPanel1 = new App.Panels.OptionsPanel();
         playPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         levelSelectPanel = new javax.swing.JPanel();
@@ -142,184 +96,8 @@ public class Main extends javax.swing.JFrame {
 
         masterPanel.setFocusable(false);
         masterPanel.setLayout(new java.awt.CardLayout());
-
-        mainMenu.setFocusable(false);
-        mainMenu.setLayout(new java.awt.BorderLayout());
-
-        mainPanel.setFocusable(false);
-        mainPanel.setLayout(new java.awt.GridLayout(2, 1));
-
-        titlePanel.setAlignmentX(0.0F);
-        titlePanel.setAlignmentY(0.0F);
-        titlePanel.setFocusable(false);
-        titlePanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("SORT IN SYNC");
-        jLabel1.setAlignmentY(0.0F);
-        jLabel1.setFocusable(false);
-        titlePanel.add(jLabel1, java.awt.BorderLayout.CENTER);
-
-        mainPanel.add(titlePanel);
-
-        bottomMain.setFocusable(false);
-
-        bottomBtns.setFocusable(false);
-        bottomBtns.setLayout(new java.awt.GridLayout(3, 1));
-
-        playBtn.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        playBtn.setText("PLAY");
-        playBtn.setFocusable(false);
-        playBtn.addActionListener(this::mainMenuActionListener);
-        bottomBtns.add(playBtn);
-
-        optionsBtn.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        optionsBtn.setText("OPTION");
-        optionsBtn.setFocusable(false);
-        optionsBtn.addActionListener(this::mainMenuActionListener);
-        bottomBtns.add(optionsBtn);
-
-        exitBtn.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        exitBtn.setText("EXIT");
-        exitBtn.setFocusable(false);
-        exitBtn.addActionListener(this::mainMenuActionListener);
-        bottomBtns.add(exitBtn);
-
-        bottomMain.add(bottomBtns);
-
-        mainPanel.add(bottomMain);
-
-        mainMenu.add(mainPanel, java.awt.BorderLayout.CENTER);
-
-        userLoginPanel.setFocusable(false);
-        userLoginPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        ulpRight.setLayout(new java.awt.CardLayout());
-
-        loginBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        loginBtn.setText("LOGIN");
-        loginBtn.setFocusable(false);
-        loginBtn.addActionListener(this::loginActionPerformed);
-        notLoggedInPanel.add(loginBtn);
-
-        signupBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        signupBtn.setText("SIGNUP");
-        signupBtn.setFocusable(false);
-        signupBtn.addActionListener(this::loginActionPerformed);
-        notLoggedInPanel.add(signupBtn);
-
-        ulpRight.add(notLoggedInPanel, "notLogged");
-
-        currentUserText.setFont(new java.awt.Font("Segoe UI", 2, 10)); // NOI18N
-        loggedInPanel.add(currentUserText);
-
-        signoutBtn.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        signoutBtn.setText("Sign Out");
-        signoutBtn.setFocusable(false);
-        signoutBtn.addActionListener(this::signoutBtnActionPerformed);
-        loggedInPanel.add(signoutBtn);
-
-        ulpRight.add(loggedInPanel, "logged");
-
-        userLoginPanel.add(ulpRight);
-
-        mainMenu.add(userLoginPanel, java.awt.BorderLayout.SOUTH);
-
         masterPanel.add(mainMenu, "mainMenu");
-
-        optionsPanel.setFocusable(false);
-        optionsPanel.setLayout(new java.awt.BorderLayout());
-
-        topOptions.setLayout(new java.awt.GridLayout(2, 1));
-
-        audioCalibPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
-
-        offsetText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        offsetText.setText("Global Offset (ms)");
-        offsetPanel.add(offsetText);
-
-        offsetSpinner.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        offsetSpinner.setModel(new javax.swing.SpinnerNumberModel(0, -500, 500, 1));
-        offsetPanel.add(offsetSpinner);
-
-        audioCalibPanel.add(offsetPanel);
-
-        musicVolText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        musicVolText.setLabelFor(musicVolumeSlider);
-        musicVolText.setText("Music Volume");
-        musicVolumePanel.add(musicVolText);
-
-        musicVolumeSlider.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        musicVolumeSlider.setToolTipText("");
-        musicVolumeSlider.setValue(100);
-        musicVolumePanel.add(musicVolumeSlider);
-
-        audioCalibPanel.add(musicVolumePanel);
-
-        sfxVolumeText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        sfxVolumeText.setLabelFor(sfxVolumeSlider);
-        sfxVolumeText.setText("SFX Volume");
-        sfxVolumePanel.add(sfxVolumeText);
-
-        sfxVolumeSlider.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        sfxVolumeSlider.setValue(100);
-        sfxVolumePanel.add(sfxVolumeSlider);
-
-        audioCalibPanel.add(sfxVolumePanel);
-
-        topOptions.add(audioCalibPanel);
-
-        visualOptionPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEADING));
-
-        resolutionText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        resolutionText.setLabelFor(resolutionComboBox);
-        resolutionText.setText("Resolution");
-        screenSizePanel.add(resolutionText);
-
-        resolutionComboBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        resolutionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select A Resolution", "1280x720", "1024x768", "960x540", "800x600", "640x480" }));
-        screenSizePanel.add(resolutionComboBox);
-
-        visualOptionPanel.add(screenSizePanel);
-
-        themeText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        themeText.setText("Select a Theme");
-        themePanel.add(themeText);
-
-        themeComboBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        themeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select A Theme", "Midnight Dark", "Classic Light", "Retro Synthwave", "Cyberpunk Neon", "Vaporwave Sunset" }));
-        themePanel.add(themeComboBox);
-
-        visualOptionPanel.add(themePanel);
-
-        fontText.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        fontText.setText("Font");
-        fontPanel.add(fontText);
-
-        fontComboBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        fontComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SansSerif (Default)", "Monospaced", "Serif", "Arial", "Impact" }));
-        fontPanel.add(fontComboBox);
-
-        visualOptionPanel.add(fontPanel);
-
-        topOptions.add(visualOptionPanel);
-
-        optionsPanel.add(topOptions, java.awt.BorderLayout.CENTER);
-
-        optionsCancel.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        optionsCancel.setText("CANCEL");
-        optionsCancel.addActionListener(this::optionsActionPerformed);
-        optionsNav.add(optionsCancel);
-
-        optionsSave.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        optionsSave.setText("SAVE");
-        optionsSave.addActionListener(this::optionsActionPerformed);
-        optionsNav.add(optionsSave);
-
-        optionsPanel.add(optionsNav, java.awt.BorderLayout.SOUTH);
-
-        masterPanel.add(optionsPanel, "optionsPanel");
+        masterPanel.add(optionsPanel1, "optionsPanel");
 
         playPanel.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -377,6 +155,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Canon");
         level1.add(jLabel6);
 
@@ -475,6 +254,7 @@ public class Main extends javax.swing.JFrame {
         jPanel4.add(jPanel6, java.awt.BorderLayout.NORTH);
 
         buttonGroup1.add(easyRB);
+        easyRB.setSelected(true);
         easyRB.setText("EASY");
         jPanel7.add(easyRB);
 
@@ -518,105 +298,11 @@ public class Main extends javax.swing.JFrame {
         keyMapper.validateKey(key);
     }//GEN-LAST:event_playPanelKeyPressed
 
-    private void mainMenuActionListener(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuActionListener
-        // TODO add your handling code here:
-        if (evt.getSource() == playBtn) {
-            System.out.println("[Changed-Panel]: Main Menu -> Level Select");
-            this.swapCard(masterPanel, "levelPanel");
-            playPanel.setFocusable(true);
-            playPanel.requestFocusInWindow();
-        } else if (evt.getSource() == optionsBtn) {
-            System.out.println("[Changed-Panel]: Main Menu -> Options");
-            this.swapCard(masterPanel, "optionsPanel");
-        } else if (evt.getSource() == exitBtn) {
-            System.out.println("[Exit]: Program has been terminated");
-            System.exit(0);
-        }
-    }//GEN-LAST:event_mainMenuActionListener
-
-    private void optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsActionPerformed
-        // TODO add your handling code here:
-        if (evt.getSource() == optionsCancel) {
-            System.out.println("[Changed-Panel]: Options -> Main Menu");
-            this.swapCard(masterPanel, "mainMenu");
-        } else if (evt.getSource() == optionsSave) {
-            System.out.println("[Update]: Saving option configuration");
-            
-            options.changeTheme(themeComboBox);
-            options.changeResolution(resolutionComboBox);
-            options.changeFont(fontComboBox);
-            
-            this.swapCard(masterPanel, "mainMenu");
-            System.out.println("[Changed-Panel]: Options -> Main Menu");
-        }
-    }//GEN-LAST:event_optionsActionPerformed
-
     private void levelSelectBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelSelectBackActionPerformed
         // TODO add your handling code here:
         System.out.println("[Changed-Panel]: Level Select -> Main Menu");
         this.swapCard(masterPanel,"mainMenu");
     }//GEN-LAST:event_levelSelectBackActionPerformed
-
-    private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
-        // TODO add your handling code here:
-        JTextField username = new JTextField();
-        JTextField password = new JPasswordField();
-        String pass, user;
-
-        Object[] comp = {
-            "Username:", username,
-            "Password:", password
-        };
-        
-        if (evt.getSource() == loginBtn) {
-            System.out.println("[Notice]: Attempting to login to an account.");
-            int option = JOptionPane.showConfirmDialog(null, comp, "Form", JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION) {
-                user = username.getText();
-                pass = password.getText();
-
-                System.out.println(user + " - " + pass);
-                if (database.validateLogin(user, pass)) {
-                    System.out.println("[Success]: Logged in as: " + user);
-                    // Create new user Object reference the currentUser as the user (?)
-                    currentUserText.setText("Logged in as:" + user);
-                    this.swapCard(ulpRight, "logged");
-                } else {
-                    System.out.println("[Error]: Could not successfully login.");
-                    JOptionPane.showMessageDialog(null, "Invalid username or password", "Warning", JOptionPane.WARNING_MESSAGE);
-                }
-            } 
-        } else if (evt.getSource() == signupBtn) {
-            System.out.println("[Notice]: Creating a new account.");
-            int option = JOptionPane.showConfirmDialog(null, comp, "Form", JOptionPane.OK_CANCEL_OPTION);
-            
-            // Save it to database
-            if (option == JOptionPane.OK_OPTION) {
-                user = username.getText();
-                pass = password.getText();
-
-                System.out.println(user + " - " + pass);
-                if (database.registerUser(user, pass)) {
-                    System.out.println("Account created for: " + user);
-                    // Create new user Object.
-                    
-                } else {
-                    System.out.println("[Error]: Failed to create account.");
-                    JOptionPane.showMessageDialog(null, "User already taken or invalid input.", "Warning", JOptionPane.WARNING_MESSAGE);
-                }
-            } 
-        }
-    }//GEN-LAST:event_loginActionPerformed
-
-    private void signoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signoutBtnActionPerformed
-        // TODO add your handling code here:
-        int options = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Log out", JOptionPane.OK_CANCEL_OPTION);
-        if (options == JOptionPane.OK_OPTION) {
-            JOptionPane.showMessageDialog(null, "Successfully Logged out.");
-            currentUserText.setText("");
-            this.swapCard(ulpRight, "notLogged");
-        }
-    }//GEN-LAST:event_signoutBtnActionPerformed
 
     private void levelMouseEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseEnter
         javax.swing.JPanel pnl = (javax.swing.JPanel) evt.getComponent();
@@ -666,20 +352,11 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel audioCalibPanel;
-    private javax.swing.JPanel bottomBtns;
-    private javax.swing.JPanel bottomMain;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JLabel currentUserText;
     private javax.swing.JPanel difficulty;
     private javax.swing.JRadioButton easyRB;
-    private javax.swing.JButton exitBtn;
-    private javax.swing.JComboBox<String> fontComboBox;
-    private javax.swing.JPanel fontPanel;
-    private javax.swing.JLabel fontText;
     private javax.swing.JRadioButton hardRB;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
@@ -708,43 +385,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel levelSettingsPanel;
     private javax.swing.JPanel levels;
     private javax.swing.JPanel levelsPanel;
-    private javax.swing.JPanel loggedInPanel;
-    private javax.swing.JButton loginBtn;
     private javax.swing.JPanel mainLevelSelect;
-    private javax.swing.JPanel mainMenu;
-    private javax.swing.JPanel mainPanel;
+    private App.Panels.MainMenu mainMenu;
     private javax.swing.JPanel masterPanel;
     private javax.swing.JRadioButton mediumRB;
-    private javax.swing.JLabel musicVolText;
-    private javax.swing.JPanel musicVolumePanel;
-    private javax.swing.JSlider musicVolumeSlider;
-    private javax.swing.JPanel notLoggedInPanel;
-    private javax.swing.JPanel offsetPanel;
-    private javax.swing.JSpinner offsetSpinner;
-    private javax.swing.JLabel offsetText;
-    private javax.swing.JButton optionsBtn;
-    private javax.swing.JButton optionsCancel;
-    private javax.swing.JPanel optionsNav;
-    private javax.swing.JPanel optionsPanel;
-    private javax.swing.JButton optionsSave;
-    private javax.swing.JButton playBtn;
+    private App.Panels.OptionsPanel optionsPanel1;
     private javax.swing.JPanel playPanel;
-    private javax.swing.JComboBox<String> resolutionComboBox;
-    private javax.swing.JLabel resolutionText;
-    private javax.swing.JPanel screenSizePanel;
-    private javax.swing.JPanel sfxVolumePanel;
-    private javax.swing.JSlider sfxVolumeSlider;
-    private javax.swing.JLabel sfxVolumeText;
-    private javax.swing.JButton signoutBtn;
-    private javax.swing.JButton signupBtn;
-    private javax.swing.JComboBox<String> themeComboBox;
-    private javax.swing.JPanel themePanel;
-    private javax.swing.JLabel themeText;
-    private javax.swing.JPanel titlePanel;
     private javax.swing.JPanel topLevelSelect;
-    private javax.swing.JPanel topOptions;
-    private javax.swing.JPanel ulpRight;
-    private javax.swing.JPanel userLoginPanel;
-    private javax.swing.JPanel visualOptionPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,9 @@
  */
 package Lib;
 
+import App.Components.CustomButton;
+import App.Components.CustomDropdown;
+import App.Components.CustomSlider;
 import App.Main;
 import java.awt.Color;
 import javax.swing.JComboBox;
@@ -26,32 +29,22 @@ public class Options {
     public void changeTheme(JComboBox item) {
         String theme = (String) item.getSelectedItem();
         if (theme == null || theme.equals("Default")) return;
-
+ 
         switch (theme) {
-            case "Midnight Dark":
-                bgColor = new java.awt.Color(43, 43, 43);
-                fgColor = java.awt.Color.WHITE;
-                break;
-            case "Classic Light":
+            // These two match the items actually populated in
+            // OptionsPanel.form's themeDropdown right now.
+            case "Light":
                 bgColor = new java.awt.Color(240, 240, 240);
                 fgColor = new java.awt.Color(30, 30, 30);
                 break;
-            case "Retro Synthwave":
-                bgColor = new java.awt.Color(20, 10, 40);
-                fgColor = new java.awt.Color(0, 255, 204);
-                break;
-            case "Cyberpunk Neon":
-                bgColor = java.awt.Color.BLACK;
-                fgColor = new java.awt.Color(255, 255, 0); 
-                break;
-            case "Vaporwave Sunset":
-                bgColor = new java.awt.Color(255, 182, 193); 
-                fgColor = new java.awt.Color(138, 43, 226);  
+            case "Dark":
+                bgColor = new java.awt.Color(43, 43, 43);
+                fgColor = java.awt.Color.WHITE;
                 break;
             default:
                 return;
         }
-
+ 
         applyColorsRecursively(window.getContentPane(), bgColor, fgColor);
         javax.swing.SwingUtilities.updateComponentTreeUI(window);
     }
@@ -59,10 +52,10 @@ public class Options {
     public void changeResolution(JComboBox item) {
         String res = (String) item.getSelectedItem();
         if (res == null || res.equals("Select A Resolution")) return;
-
+ 
         int width = window.getWidth();
         int height = window.getHeight();
-
+ 
         switch (res) {
             case "1280x720": width = 1280; height = 720; break;
             case "1024x768": width = 1024; height = 768; break;
@@ -78,10 +71,10 @@ public class Options {
     public void changeFont(JComboBox item) {
         String fontChoice = (String) item.getSelectedItem();
         if (fontChoice == null) return;
-
+ 
         // Strip the " (Default)" tag if SansSerif is selected so the Font class can read it
         String fontName = fontChoice.replace(" (Default)", "");
-
+ 
         applyFontRecursively(window.getContentPane(), fontName);
         javax.swing.SwingUtilities.updateComponentTreeUI(window);
     }
@@ -91,8 +84,29 @@ public class Options {
         container.setForeground(fg);
         
         for (java.awt.Component c : container.getComponents()) {
-            c.setBackground(bg);
-            c.setForeground(fg);
+            if (c instanceof CustomButton) {
+                CustomButton btn = (CustomButton) c;
+                btn.setColor(bg);
+                btn.setColorHover(computeHoverColor(bg));
+                btn.setColorClicked(bg.darker());
+                btn.setBorderColor(fg);
+                btn.setForeground(fg);
+            } else if (c instanceof CustomDropdown) {
+                CustomDropdown dd = (CustomDropdown) c;
+                dd.setColor(bg);
+                dd.setColorHover(computeHoverColor(bg));
+                dd.setBorderColor(fg);
+                dd.setForeground(fg);
+            } else if (c instanceof CustomSlider) {
+                CustomSlider sl = (CustomSlider) c;
+                sl.setColor(bg);
+                sl.setColorHover(computeHoverColor(bg));
+                sl.setColorClicked(bg.darker());
+                sl.setBorderColor(fg);
+            } else {
+                c.setBackground(bg);
+                c.setForeground(fg);
+            }
             
             if (c instanceof java.awt.Container) {
                 applyColorsRecursively((java.awt.Container) c, bg, fg);
@@ -109,7 +123,6 @@ public class Options {
         for (java.awt.Component c : container.getComponents()) {
             java.awt.Font cFont = c.getFont();
             if (cFont != null) {
-                // Preserves the existing size and style of each label/button while swapping the family
                 c.setFont(new java.awt.Font(fontName, cFont.getStyle(), cFont.getSize()));
             }
             
