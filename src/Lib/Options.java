@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Lib;
-
 import App.Components.CustomButton;
 import App.Components.CustomDropdown;
 import App.Components.CustomSlider;
@@ -17,35 +16,25 @@ import javax.swing.JComboBox;
  */
 public class Options {
     private final Main window;
-    private Color bgColor;
-    private Color fgColor;
+    // Set default values so it doesnt bug out since we dont have a theme.
+    private Color bgColor = Color.decode("#C7242C"); 
+    private Color fgColor = Color.decode("#000000");
     
     public Options(Main window) {
         this.window = window;
-        this.bgColor = window.getContentPane().getBackground();
-        this.fgColor = window.getContentPane().getForeground();
     }
     
     public void changeTheme(JComboBox item) {
-        String theme = (String) item.getSelectedItem();
-        if (theme == null || theme.equals("Default")) return;
- 
-        switch (theme) {
-            // These two match the items actually populated in
-            // OptionsPanel.form's themeDropdown right now.
-            case "Light":
-                bgColor = new java.awt.Color(240, 240, 240);
-                fgColor = new java.awt.Color(30, 30, 30);
-                break;
-            case "Dark":
-                bgColor = new java.awt.Color(43, 43, 43);
-                fgColor = java.awt.Color.WHITE;
-                break;
-            default:
-                return;
-        }
- 
-        applyColorsRecursively(window.getContentPane(), bgColor, fgColor);
+        String label = (String) item.getSelectedItem();
+        if (label == null) return;
+
+        Theme theme = Theme.fromLabel(label);
+        if (theme == null) return;
+
+        bgColor = theme.getBgColor();
+        fgColor = theme.getFgColor();
+
+        applyTheme(window.getContentPane(), theme);
         javax.swing.SwingUtilities.updateComponentTreeUI(window);
     }
     
@@ -65,51 +54,53 @@ public class Options {
         }
         
         window.setSize(width, height);
-        window.setLocationRelativeTo(null); // Keeps the window centered after resizing
+        window.setLocationRelativeTo(null);
     }
     
     public void changeFont(JComboBox item) {
         String fontChoice = (String) item.getSelectedItem();
         if (fontChoice == null) return;
  
-        // Strip the " (Default)" tag if SansSerif is selected so the Font class can read it
         String fontName = fontChoice.replace(" (Default)", "");
  
         applyFontRecursively(window.getContentPane(), fontName);
         javax.swing.SwingUtilities.updateComponentTreeUI(window);
     }
     
-    private void applyColorsRecursively(java.awt.Container container, java.awt.Color bg, java.awt.Color fg) {
-        container.setBackground(bg);
-        container.setForeground(fg);
+    private void applyTheme(java.awt.Container container, Theme theme) {
+        container.setBackground(theme.getBgColor());
+        container.setForeground(theme.getFgColor());
         
         for (java.awt.Component c : container.getComponents()) {
             if (c instanceof CustomButton) {
                 CustomButton btn = (CustomButton) c;
-                btn.setColor(bg);
-                btn.setColorHover(computeHoverColor(bg));
-                btn.setColorClicked(bg.darker());
-                btn.setBorderColor(fg);
-                btn.setForeground(fg);
+                btn.setColor(theme.getAccentColor());
+                btn.setColorHover(computeHoverColor(theme.getAccentColor()));
+                btn.setColorClicked(theme.getAccentClickedColor());
+                btn.setBorderColor(theme.getAccentBorderColor());
+                btn.setForeground(theme.getAccentTextColor());
+                continue;
             } else if (c instanceof CustomDropdown) {
                 CustomDropdown dd = (CustomDropdown) c;
-                dd.setColor(bg);
-                dd.setColorHover(computeHoverColor(bg));
-                dd.setBorderColor(fg);
-                dd.setForeground(fg);
+                dd.setColor(theme.getAccentColor());
+                dd.setColorHover(computeHoverColor(theme.getAccentColor()));
+                dd.setBorderColor(theme.getAccentBorderColor());
+                dd.setForeground(theme.getAccentTextColor());
+                continue; 
             } else if (c instanceof CustomSlider) {
                 CustomSlider sl = (CustomSlider) c;
-                sl.setColor(bg);
-                sl.setColorHover(computeHoverColor(bg));
-                sl.setColorClicked(bg.darker());
-                sl.setBorderColor(fg);
+                sl.setColor(theme.getAccentColor());
+                sl.setColorHover(computeHoverColor(theme.getAccentColor()));
+                sl.setColorClicked(theme.getAccentClickedColor());
+                sl.setBorderColor(theme.getAccentBorderColor());
+                continue;
             } else {
-                c.setBackground(bg);
-                c.setForeground(fg);
+                c.setBackground(theme.getBgColor());
+                c.setForeground(theme.getFgColor());
             }
             
             if (c instanceof java.awt.Container) {
-                applyColorsRecursively((java.awt.Container) c, bg, fg);
+                applyTheme((java.awt.Container) c, theme);
             }
         }
     }
