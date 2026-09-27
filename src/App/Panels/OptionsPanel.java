@@ -5,6 +5,7 @@
 package App.Panels;
 
 import Lib.Options;
+import Lib.Theme;
 import java.awt.CardLayout;
 import javax.swing.JComponent;
 
@@ -33,6 +34,7 @@ public class OptionsPanel extends javax.swing.JPanel {
         for (String res : RESOLUTIONS) {
             resolutionDropdown.addItem(res);
         }
+        themeDropdown.setModel(new javax.swing.DefaultComboBoxModel<>(Theme.labels()));
     }
 
     public void setMasterPanel(JComponent masterPanel) {
@@ -74,8 +76,13 @@ public class OptionsPanel extends javax.swing.JPanel {
         cancelBtn = new App.Components.CustomButton();
         saveBtn = new App.Components.CustomButton();
 
+        setBackground(new java.awt.Color(199, 36, 44));
         setLayout(new java.awt.BorderLayout());
 
+        settingsPanel.setBackground(new java.awt.Color(199, 36, 44));
+        settingsPanel.setForeground(new java.awt.Color(241, 212, 45));
+
+        audioPanel.setBackground(new java.awt.Color(199, 36, 44));
         audioPanel.setLayout(new java.awt.GridLayout(3, 2, 15, 12));
 
         musicText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -98,12 +105,14 @@ public class OptionsPanel extends javax.swing.JPanel {
 
         settingsPanel.addTab("AUDIO", audioPanel);
 
+        visualPanel.setBackground(new java.awt.Color(199, 36, 44));
         visualPanel.setLayout(new java.awt.GridLayout(3, 2));
 
         resolutionText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         resolutionText.setText("Resolution");
         visualPanel.add(resolutionText);
 
+        resolutionPanel.setBackground(new java.awt.Color(199, 36, 44));
         resolutionPanel.add(resolutionDropdown);
 
         visualPanel.add(resolutionPanel);
@@ -111,6 +120,8 @@ public class OptionsPanel extends javax.swing.JPanel {
         themeText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         themeText.setText("Theme");
         visualPanel.add(themeText);
+
+        themePanel.setBackground(new java.awt.Color(199, 36, 44));
 
         themeDropdown.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Light", "Dark" }));
         themePanel.add(themeDropdown);
@@ -121,6 +132,8 @@ public class OptionsPanel extends javax.swing.JPanel {
         fontText.setText("Font");
         visualPanel.add(fontText);
 
+        fontPanel.setBackground(new java.awt.Color(199, 36, 44));
+
         fontDropdown.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SansSerif", "Monospaced" }));
         fontPanel.add(fontDropdown);
 
@@ -130,13 +143,16 @@ public class OptionsPanel extends javax.swing.JPanel {
 
         add(settingsPanel, java.awt.BorderLayout.CENTER);
 
+        bottomPanel.setBackground(new java.awt.Color(199, 36, 44));
         bottomPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         cancelBtn.setText("CANCEL");
+        cancelBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cancelBtn.addActionListener(this::optionsPerformed);
         bottomPanel.add(cancelBtn);
 
         saveBtn.setText("SAVE");
+        saveBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         saveBtn.addActionListener(this::optionsPerformed);
         bottomPanel.add(saveBtn);
 

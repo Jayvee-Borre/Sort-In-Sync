@@ -55,6 +55,7 @@ public class CustomButton extends JButton {
 
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+        repaint();
     }
 
     public int getRadius() {
@@ -66,11 +67,12 @@ public class CustomButton extends JButton {
     }
 
     public CustomButton() {
-        setColor(new Color(66, 133, 244));
-        colorHover = new Color(90, 151, 255);
-        colorClicked = new Color(48, 105, 209);
-        borderColor = new Color(33, 89, 189);
+        setColor(Color.decode("#F1D42D"));       // Classic accent fill
+        colorHover = getColor().brighter();      // lighter tint of the fill
+        colorClicked = Color.decode("#794F05");  // Classic accent pressed/bevel
+        borderColor = Color.decode("#E3B800");   // Classic accent border
         radius = 20;
+        this.setForeground(Color.decode("#000000"));
         setContentAreaFilled(false);
         
         addMouseListener(new MouseAdapter() {

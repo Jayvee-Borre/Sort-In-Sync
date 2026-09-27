@@ -111,16 +111,16 @@ public class CustomDropdown extends JComboBox<String> {
     private int minHeight = 32;
  
     public CustomDropdown() {
-        // Same palette as CustomButton, so every control matches
-        setColor(new Color(66, 133, 244));
-        colorHover = new Color(90, 151, 255);
-        borderColor = new Color(33, 89, 189);
+        // Same classic accent palette as CustomButton, so every control matches
+        setColor(Color.decode("#F1D42D"));       // Classic accent fill
+        colorHover = getColor().brighter();      // lighter tint of the fill
+        borderColor = Color.decode("#E3B800");   // Classic accent border
         radius = 12;
  
         setUI(new ArrowOnlyUI());
         setRenderer(new AlignedRenderer());
         setFont(new Font("SansSerif", Font.PLAIN, 14));
-        setForeground(Color.WHITE);
+        setForeground(Color.BLACK);
         setFocusable(false);
         setBorder(new RoundedBorder());
         setOpaque(false);
@@ -226,7 +226,7 @@ public class CustomDropdown extends JComboBox<String> {
                 setOpaque(true);
                 if (isSelected) {
                     setBackground(colorHover);
-                    setForeground(Color.WHITE);
+                    setForeground(Color.BLACK);
                 } else {
                     setBackground(color);
                     setForeground(CustomDropdown.this.getForeground());

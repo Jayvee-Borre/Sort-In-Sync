@@ -4,12 +4,27 @@
  */
 package App.Panels;
 
+import App.Components.CustomLabel;
+import App.Components.CustomRadioButton;
+import Lib.Options;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
 /**
  *
  * @author Jayvee
  */
 public class LevelSelect extends javax.swing.JPanel {
-
+    private JComponent masterPanel;
+    private Options options;
+    private String selectedLevel;
+    
     /**
      * Creates new form LevelSelect
      */
@@ -26,19 +41,302 @@ public class LevelSelect extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        bGroup1 = new javax.swing.ButtonGroup();
+        topPanel = new javax.swing.JPanel();
+        customButton1 = new App.Components.CustomButton();
+        mainPanel = new javax.swing.JPanel();
+        leaderboardPanel = new javax.swing.JPanel();
+        leaderboardTitle = new javax.swing.JPanel();
+        customLabel4 = new App.Components.CustomLabel();
+        leaderboardNames = new javax.swing.JPanel();
+        levelsPanel = new javax.swing.JPanel();
+        level1 = new javax.swing.JPanel();
+        customLabel1 = new App.Components.CustomLabel();
+        level2 = new javax.swing.JPanel();
+        customLabel2 = new App.Components.CustomLabel();
+        level3 = new javax.swing.JPanel();
+        customLabel3 = new App.Components.CustomLabel();
+        settingsPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        easyRB = new App.Components.CustomRadioButton();
+        normalRB = new App.Components.CustomRadioButton();
+        hardRB = new App.Components.CustomRadioButton();
+        playBtn = new App.Components.CustomButton();
+
+        setBackground(new java.awt.Color(199, 36, 44));
+        setLayout(new java.awt.BorderLayout());
+
+        topPanel.setBackground(new java.awt.Color(199, 36, 44));
+        topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        customButton1.setText("BACK");
+        customButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        customButton1.addActionListener(this::backPerformed);
+        topPanel.add(customButton1);
+
+        add(topPanel, java.awt.BorderLayout.NORTH);
+
+        mainPanel.setBackground(new java.awt.Color(199, 36, 44));
+        mainPanel.setLayout(new java.awt.GridLayout(1, 3));
+
+        leaderboardPanel.setBackground(new java.awt.Color(199, 36, 44));
+        leaderboardPanel.setLayout(new java.awt.BorderLayout());
+
+        leaderboardTitle.setBackground(new java.awt.Color(199, 36, 44));
+
+        customLabel4.setText("LEADEARBOARD TOP 10");
+        customLabel4.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardTitle.add(customLabel4);
+
+        leaderboardPanel.add(leaderboardTitle, java.awt.BorderLayout.NORTH);
+
+        leaderboardNames.setBackground(new java.awt.Color(199, 36, 44));
+        leaderboardPanel.add(leaderboardNames, java.awt.BorderLayout.CENTER);
+
+        mainPanel.add(leaderboardPanel);
+
+        levelsPanel.setBackground(new java.awt.Color(199, 36, 44));
+        levelsPanel.setLayout(new java.awt.GridLayout(3, 1));
+
+        level1.setBackground(new java.awt.Color(199, 36, 44));
+        level1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelHoverMouse(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                hoverRemovedMouse(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                levelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                levelMouseRelease(evt);
+            }
+        });
+
+        customLabel1.setText("Canon");
+        level1.add(customLabel1);
+
+        levelsPanel.add(level1);
+
+        level2.setBackground(new java.awt.Color(199, 36, 44));
+        level2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelHoverMouse(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                hoverRemovedMouse(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                levelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                levelMouseRelease(evt);
+            }
+        });
+
+        customLabel2.setText("Level 2");
+        level2.add(customLabel2);
+
+        levelsPanel.add(level2);
+
+        level3.setBackground(new java.awt.Color(199, 36, 44));
+        level3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelHoverMouse(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                hoverRemovedMouse(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                levelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                levelMouseRelease(evt);
+            }
+        });
+
+        customLabel3.setText("Level 3");
+        level3.add(customLabel3);
+
+        levelsPanel.add(level3);
+
+        mainPanel.add(levelsPanel);
+
+        settingsPanel.setBackground(new java.awt.Color(199, 36, 44));
+
+        jPanel1.setBackground(new java.awt.Color(199, 36, 44));
+        jPanel1.setLayout(new java.awt.GridLayout(3, 1, 0, 5));
+
+        bGroup1.add(easyRB);
+        easyRB.setText("Easy");
+        easyRB.setEnabled(false);
+        easyRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jPanel1.add(easyRB);
+
+        bGroup1.add(normalRB);
+        normalRB.setText("Normal");
+        normalRB.setEnabled(false);
+        normalRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jPanel1.add(normalRB);
+
+        bGroup1.add(hardRB);
+        hardRB.setText("Hard");
+        hardRB.setEnabled(false);
+        hardRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jPanel1.add(hardRB);
+
+        settingsPanel.add(jPanel1);
+
+        playBtn.setText("PLAY");
+        playBtn.setEnabled(false);
+        playBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        playBtn.addActionListener(this::playButtonPressed);
+        settingsPanel.add(playBtn);
+
+        mainPanel.add(settingsPanel);
+
+        add(mainPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setMasterPanel(JComponent masterPanel) {
+        this.masterPanel = masterPanel;
+    }
+
+    public void setOptions(Options options) {
+        this.options = options;
+    }
+    
+    private void backPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backPerformed
+        // TODO add your handling code here:
+        if (this.masterPanel == null) {
+            System.out.println("[Error]: masterPanel was never set on MainMenu - call setMasterPanel() from Main's constructor.");
+            return;
+        }
+        System.out.println("[Changed-Panel]: Level Select -> Main Menu");
+        bGroup1.clearSelection();
+        this.swapCard(masterPanel, "mainMenu");
+    }//GEN-LAST:event_backPerformed
+
+    private void playButtonPressed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonPressed
+        // TODO add your handling code here:
+        if (this.masterPanel == null) return;
+       
+        swapCard(masterPanel, "playPanel");
+        for (Component comp : jPanel1.getComponents()) {
+            if (comp instanceof CustomRadioButton) {
+                boolean selected = ((CustomRadioButton) comp).isSelected();
+                System.out.println(selected);
+                
+            }
+        }
+    }//GEN-LAST:event_playButtonPressed
+
+    /*
+        Mouse events basically just change the background color of the panel and change
+        the current selected level so once they select a difficulty and a level, they
+        would be able tom play that level.
+    */
+    private void panelHoverMouse(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelHoverMouse
+        // TODO add your handling code here:
+        JPanel comp = (JPanel) evt.getComponent();
+        Color clr = options.getBgColor();
+        comp.setBackground(options.computeHoverColor(clr));
+    }//GEN-LAST:event_panelHoverMouse
+
+    private void hoverRemovedMouse(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hoverRemovedMouse
+        // TODO add your handling code here:
+        JPanel comp = (JPanel) evt.getComponent();
+        Color clr = options.getBgColor();
+        comp.setBackground(clr);
+    }//GEN-LAST:event_hoverRemovedMouse
+
+    private void levelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMousePressed
+        // TODO add your handling code here:
+        if (evt.getSource() == level1) {
+            extractText(level1);
+            selectedLevel = "Canon";
+        }
+        else if (evt.getSource() == level2) { 
+            extractText(level2);
+            selectedLevel = "Level2";
+        } 
+        else if (evt.getSource() == level3) {
+            extractText(level3);
+            selectedLevel = "Level3";
+        }
+        System.out.println(selectedLevel);
+        JPanel panel = (JPanel) evt.getComponent();
+        Color clr = options.getBgColor();
+        for (int i = 0; i < 2; i++) {
+            clr = options.computeHoverColor(clr);
+        }
+        panel.setBackground(clr);
+        setButtonStates();
+    }//GEN-LAST:event_levelMousePressed
+    
+    private void levelMouseRelease(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseRelease
+        // TODO add your handling code here:
+        JPanel panel = (JPanel) evt.getComponent();
+        Color clr = options.getBgColor();
+        clr = options.computeHoverColor(clr);
+        panel.setBackground(clr);
+    }//GEN-LAST:event_levelMouseRelease
+ 
+    private void setButtonHelper(boolean bool) {
+        playBtn.enableInputMethods(bool);
+        for (Component comp : jPanel1.getComponents()) {
+            if (comp instanceof CustomRadioButton) {
+                ((CustomRadioButton) comp).setEnabled(bool);
+            }
+        }
+    }
+    
+    private void setButtonStates() {
+        if (selectedLevel == null) {
+            System.out.println("[Error]: No Levels Selected.");
+            setButtonHelper(false);
+            return;
+        }
+        setButtonHelper(true);
+    }
+    
+    private void extractText(JComponent component) {
+        // System.out.println(component);
+        for (Component comp : component.getComponents()) {
+           if (comp instanceof CustomLabel) {
+               String txt = ((JLabel) comp).getText();
+               System.out.println("Extracted txt: " + txt);
+           } 
+        }
+    }
+    
+    private void swapCard(JComponent comp, String name) {
+        CardLayout card = (CardLayout) comp.getLayout();
+        card.show(comp, name);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup bGroup1;
+    private App.Components.CustomButton customButton1;
+    private App.Components.CustomLabel customLabel1;
+    private App.Components.CustomLabel customLabel2;
+    private App.Components.CustomLabel customLabel3;
+    private App.Components.CustomLabel customLabel4;
+    private App.Components.CustomRadioButton easyRB;
+    private App.Components.CustomRadioButton hardRB;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel leaderboardNames;
+    private javax.swing.JPanel leaderboardPanel;
+    private javax.swing.JPanel leaderboardTitle;
+    private javax.swing.JPanel level1;
+    private javax.swing.JPanel level2;
+    private javax.swing.JPanel level3;
+    private javax.swing.JPanel levelsPanel;
+    private javax.swing.JPanel mainPanel;
+    private App.Components.CustomRadioButton normalRB;
+    private App.Components.CustomButton playBtn;
+    private javax.swing.JPanel settingsPanel;
+    private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

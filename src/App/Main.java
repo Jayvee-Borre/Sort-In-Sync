@@ -14,10 +14,6 @@ import Lib.KeyMapper;
  * @author Jayvee
  */
 
-/**
- * TODO:
- * - Fix
- */
 public class Main extends javax.swing.JFrame {
     private boolean userExists;
     private KeyMapper keyMapper = new KeyMapper();
@@ -36,6 +32,8 @@ public class Main extends javax.swing.JFrame {
         mainMenu.setMasterPanel(masterPanel);
         optionsPanel1.setMasterPanel(masterPanel);
         optionsPanel1.setOptions(options);
+        levelSelect1.setMasterPanel(masterPanel);
+        levelSelect1.setOptions(options);
     }
 
     /**
@@ -51,53 +49,24 @@ public class Main extends javax.swing.JFrame {
         masterPanel = new javax.swing.JPanel();
         mainMenu = new App.Panels.MainMenu();
         optionsPanel1 = new App.Panels.OptionsPanel();
+        levelSelect1 = new App.Panels.LevelSelect();
         playPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        levelSelectPanel = new javax.swing.JPanel();
-        topLevelSelect = new javax.swing.JPanel();
-        levelBackBtn = new javax.swing.JButton();
-        mainLevelSelect = new javax.swing.JPanel();
-        leaderboardPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        levelsPanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        levels = new javax.swing.JPanel();
-        level1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        level2 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        level3 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
-        level4 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        level5 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        levelSettingsPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        difficulty = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
-        easyRB = new javax.swing.JRadioButton();
-        mediumRB = new javax.swing.JRadioButton();
-        hardRB = new javax.swing.JRadioButton();
-        jPanel8 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SORT IN SYNC");
+        setBackground(new java.awt.Color(199, 36, 44));
         setFocusable(false);
+        setForeground(java.awt.Color.black);
         setPreferredSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
+        masterPanel.setBackground(new java.awt.Color(199, 36, 44));
         masterPanel.setFocusable(false);
         masterPanel.setLayout(new java.awt.CardLayout());
         masterPanel.add(mainMenu, "mainMenu");
         masterPanel.add(optionsPanel1, "optionsPanel");
+        masterPanel.add(levelSelect1, "levelPanel");
 
         playPanel.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -111,182 +80,6 @@ public class Main extends javax.swing.JFrame {
 
         masterPanel.add(playPanel, "playPanel");
 
-        levelSelectPanel.setFocusable(false);
-        levelSelectPanel.setLayout(new java.awt.BorderLayout());
-
-        topLevelSelect.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        levelBackBtn.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        levelBackBtn.setText("BACK");
-        levelBackBtn.setAlignmentY(0.0F);
-        levelBackBtn.addActionListener(this::levelSelectBackActionPerformed);
-        topLevelSelect.add(levelBackBtn);
-
-        levelSelectPanel.add(topLevelSelect, java.awt.BorderLayout.NORTH);
-
-        mainLevelSelect.setLayout(new java.awt.GridLayout(1, 3));
-
-        leaderboardPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("LEADERBOARDS (Top 10)");
-        leaderboardPanel.add(jLabel3, java.awt.BorderLayout.NORTH);
-        leaderboardPanel.add(jPanel1, java.awt.BorderLayout.CENTER);
-
-        mainLevelSelect.add(leaderboardPanel);
-
-        levelsPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("LEVELS");
-        levelsPanel.add(jLabel4, java.awt.BorderLayout.NORTH);
-
-        levels.setLayout(new java.awt.GridLayout(5, 1));
-
-        level1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                levelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                levelMouseEnter(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                levelMouseExit(evt);
-            }
-        });
-
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Canon");
-        level1.add(jLabel6);
-
-        levels.add(level1);
-
-        level2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                levelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                levelMouseEnter(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                levelMouseExit(evt);
-            }
-        });
-
-        jLabel7.setText("Song 2");
-        level2.add(jLabel7);
-
-        levels.add(level2);
-
-        level3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                levelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                levelMouseEnter(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                levelMouseExit(evt);
-            }
-        });
-
-        jLabel8.setText("Song 3");
-        level3.add(jLabel8);
-
-        levels.add(level3);
-
-        level4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                levelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                levelMouseEnter(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                levelMouseExit(evt);
-            }
-        });
-
-        jLabel9.setText("Song 4");
-        level4.add(jLabel9);
-
-        levels.add(level4);
-
-        level5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                levelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                levelMouseEnter(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                levelMouseExit(evt);
-            }
-        });
-
-        jLabel10.setText("Song 5");
-        level5.add(jLabel10);
-
-        levels.add(level5);
-
-        levelsPanel.add(levels, java.awt.BorderLayout.CENTER);
-
-        mainLevelSelect.add(levelsPanel);
-
-        levelSettingsPanel.setLayout(new java.awt.BorderLayout());
-
-        jPanel2.setLayout(new java.awt.GridLayout(3, 1));
-
-        jPanel3.setLayout(new java.awt.BorderLayout());
-        jPanel2.add(jPanel3);
-
-        difficulty.setLayout(new java.awt.GridLayout(2, 1));
-        jPanel2.add(difficulty);
-
-        jPanel5.setLayout(new java.awt.BorderLayout());
-
-        jPanel4.setLayout(new java.awt.BorderLayout());
-
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("Choose Difficulty");
-        jPanel6.add(jLabel11);
-
-        jPanel4.add(jPanel6, java.awt.BorderLayout.NORTH);
-
-        buttonGroup1.add(easyRB);
-        easyRB.setSelected(true);
-        easyRB.setText("EASY");
-        jPanel7.add(easyRB);
-
-        buttonGroup1.add(mediumRB);
-        mediumRB.setText("MEDIUM");
-        jPanel7.add(mediumRB);
-
-        buttonGroup1.add(hardRB);
-        hardRB.setText("HARD");
-        jPanel7.add(hardRB);
-
-        jPanel4.add(jPanel7, java.awt.BorderLayout.CENTER);
-
-        jPanel5.add(jPanel4, java.awt.BorderLayout.CENTER);
-
-        jButton1.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        jButton1.setText("PLAY");
-        jButton1.setFocusable(false);
-        jPanel8.add(jButton1);
-
-        jPanel5.add(jPanel8, java.awt.BorderLayout.SOUTH);
-
-        jPanel2.add(jPanel5);
-
-        levelSettingsPanel.add(jPanel2, java.awt.BorderLayout.CENTER);
-
-        mainLevelSelect.add(levelSettingsPanel);
-
-        levelSelectPanel.add(mainLevelSelect, java.awt.BorderLayout.CENTER);
-
-        masterPanel.add(levelSelectPanel, "levelPanel");
-
         getContentPane().add(masterPanel, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -297,28 +90,6 @@ public class Main extends javax.swing.JFrame {
         int key = evt.getKeyCode();
         keyMapper.validateKey(key);
     }//GEN-LAST:event_playPanelKeyPressed
-
-    private void levelSelectBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelSelectBackActionPerformed
-        // TODO add your handling code here:
-        System.out.println("[Changed-Panel]: Level Select -> Main Menu");
-        this.swapCard(masterPanel,"mainMenu");
-    }//GEN-LAST:event_levelSelectBackActionPerformed
-
-    private void levelMouseEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseEnter
-        javax.swing.JPanel pnl = (javax.swing.JPanel) evt.getComponent();
-        pnl.setBackground(options.computeHoverColor(options.getBgColor()));
-    }//GEN-LAST:event_levelMouseEnter
-
-    private void levelMouseExit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseExit
-        javax.swing.JPanel pnl = (javax.swing.JPanel) evt.getComponent();
-        pnl.setBackground(options.getBgColor());
-    }//GEN-LAST:event_levelMouseExit
-
-    private void levelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseClicked
-        // TODO add your handling code here:
-        String comp = evt.getSource().toString();
-        System.out.println("Compontent: " + comp + " was clicked");
-    }//GEN-LAST:event_levelMouseClicked
 
     public void swapCard(JComponent comp, String name) {
         CardLayout card = (CardLayout) comp.getLayout();
@@ -353,44 +124,11 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JPanel difficulty;
-    private javax.swing.JRadioButton easyRB;
-    private javax.swing.JRadioButton hardRB;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel leaderboardPanel;
-    private javax.swing.JPanel level1;
-    private javax.swing.JPanel level2;
-    private javax.swing.JPanel level3;
-    private javax.swing.JPanel level4;
-    private javax.swing.JPanel level5;
-    private javax.swing.JButton levelBackBtn;
-    private javax.swing.JPanel levelSelectPanel;
-    private javax.swing.JPanel levelSettingsPanel;
-    private javax.swing.JPanel levels;
-    private javax.swing.JPanel levelsPanel;
-    private javax.swing.JPanel mainLevelSelect;
+    private App.Panels.LevelSelect levelSelect1;
     private App.Panels.MainMenu mainMenu;
     private javax.swing.JPanel masterPanel;
-    private javax.swing.JRadioButton mediumRB;
     private App.Panels.OptionsPanel optionsPanel1;
     private javax.swing.JPanel playPanel;
-    private javax.swing.JPanel topLevelSelect;
     // End of variables declaration//GEN-END:variables
 }

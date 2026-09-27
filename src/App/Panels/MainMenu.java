@@ -61,17 +61,24 @@ public class MainMenu extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
+        mainPanel.setBackground(new java.awt.Color(199, 36, 44));
+        mainPanel.setToolTipText("");
         mainPanel.setLayout(new java.awt.GridLayout(2, 1));
 
+        titlePanel.setBackground(new java.awt.Color(199, 36, 44));
         titlePanel.setLayout(new java.awt.BorderLayout());
 
         customLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        customLabel1.setText("SORT IN SYNC");
+        customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo.png"))); // NOI18N
+        customLabel1.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         titlePanel.add(customLabel1, java.awt.BorderLayout.CENTER);
 
         mainPanel.add(titlePanel);
 
-        buttonPanel.setLayout(new java.awt.GridLayout(3, 1, 10, 10));
+        menuButtonsPanel.setBackground(new java.awt.Color(199, 36, 44));
+
+        buttonPanel.setBackground(new java.awt.Color(199, 36, 44));
+        buttonPanel.setLayout(new java.awt.GridLayout(4, 1, 10, 10));
 
         playBtn.setText("PLAY");
         playBtn.setFocusable(false);
@@ -91,28 +98,27 @@ public class MainMenu extends javax.swing.JPanel {
         exitBtn.addActionListener(this::exitPerformed);
         buttonPanel.add(exitBtn);
 
-        menuButtonsPanel.add(buttonPanel);
-
-        mainPanel.add(menuButtonsPanel);
-
-        add(mainPanel, java.awt.BorderLayout.CENTER);
-
+        bottomPanel.setBackground(new java.awt.Color(199, 36, 44));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
+        loggedOut.setBackground(new java.awt.Color(199, 36, 44));
         loggedOut.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         loginBtn.setText("LOGIN");
         loginBtn.setFocusable(false);
+        loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         loginBtn.addActionListener(this::loginActionPerformed);
         loggedOut.add(loginBtn);
 
         signUpBtn.setText("SIGN UP");
         signUpBtn.setFocusable(false);
+        signUpBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         signUpBtn.addActionListener(this::loginActionPerformed);
         loggedOut.add(signUpBtn);
 
         bottomPanel.add(loggedOut, "loggedOut");
 
+        loggedIn.setBackground(new java.awt.Color(199, 36, 44));
         loggedIn.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         userText.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -120,12 +126,19 @@ public class MainMenu extends javax.swing.JPanel {
 
         signOutBtn.setText("SIGN OUT");
         signOutBtn.setFocusable(false);
+        signOutBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         signOutBtn.addActionListener(this::signoutPerformed);
         loggedIn.add(signOutBtn);
 
         bottomPanel.add(loggedIn, "loggedIn");
 
-        add(bottomPanel, java.awt.BorderLayout.SOUTH);
+        buttonPanel.add(bottomPanel);
+
+        menuButtonsPanel.add(buttonPanel);
+
+        mainPanel.add(menuButtonsPanel);
+
+        add(mainPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
@@ -148,7 +161,7 @@ public class MainMenu extends javax.swing.JPanel {
  
                 if (database.validateLogin(user, pass)) {
                     System.out.println("[Success]: Logged in as: " + user);
-                    userText.setText(user);
+                    userText.setText("Logged in as: "+ user);
                     // TODO: once a "currently logged in as" label exists on this
                     // panel, set its text here (e.g. currentUserText.setText("Logged in as: " + user);)
                     this.swapCard(bottomPanel, "loggedIn");
