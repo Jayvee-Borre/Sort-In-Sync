@@ -5,6 +5,8 @@
 package Lib;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,6 +14,9 @@ import java.io.FileReader;
  */
 public class SongLoader {
     private String fileName;
+    private List<Note> notes = new ArrayList<>();
+    public int bpm;
+    public String audioFile;
     
     public SongLoader(String fileName) {
         this.fileName = fileName;
@@ -36,20 +41,23 @@ public class SongLoader {
                     continue;
                 }
                 
-                if (readingNotes) { // We are reading notes
+                if (readingNotes) { 
                     String[] parts = line.split(",");
-                    // parts[0] -> beats in ms
-                    // parts[1] -> keybind beat
-                    System.out.println(parts[0] + parts[1]);
-                } else { // We are reading metadata
+                    int time = Integer.parseInt(parts[0]);
+                    String keys = parts[1];
+                    notes.add(new Note(time, keys)); // Store the note
+                } else { 
                     String[] parts = line.split("=");
-                    // parts[0] -> metadata title
-                    // parts[1] -> metadata value
-                    System.out.println(parts[0] + parts[1]);
+                    if (parts[0].equals("bpm")) bpm = Integer.parseInt(parts[1]);
+                    if (parts[0].equals("audioFile")) audioFile = parts[1];
                 }
             }
         } catch (Exception err) {
             err.printStackTrace();
         }
+    }
+    
+    public List<Note> getNotes() {
+        return notes;
     }
 }
