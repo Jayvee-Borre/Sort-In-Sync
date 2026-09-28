@@ -3,12 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package App;
-
 import Lib.Options;
 import Services.Database;
 import java.awt.CardLayout;
 import javax.swing.JComponent;
-import Lib.KeyMapper;
 /**
  *
  * @author Jayvee
@@ -16,11 +14,10 @@ import Lib.KeyMapper;
 
 public class Main extends javax.swing.JFrame {
     private boolean userExists;
-    private KeyMapper keyMapper = new KeyMapper();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
     private Options options = new Options(this); // Handler for logic during method listener calls
     private Database database = new Database();
-    
+    private String currentLevel;
     /**
      * Creates new form Main
      */
@@ -32,8 +29,10 @@ public class Main extends javax.swing.JFrame {
         mainMenu.setMasterPanel(masterPanel);
         optionsPanel1.setMasterPanel(masterPanel);
         optionsPanel1.setOptions(options);
+        playPanel1.setMasterPanel(masterPanel);
         levelSelect1.setMasterPanel(masterPanel);
         levelSelect1.setOptions(options);
+        levelSelect1.setMain(this);
     }
 
     /**
@@ -50,8 +49,7 @@ public class Main extends javax.swing.JFrame {
         mainMenu = new App.Panels.MainMenu();
         optionsPanel1 = new App.Panels.OptionsPanel();
         levelSelect1 = new App.Panels.LevelSelect();
-        playPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        playPanel1 = new App.Panels.PlayPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SORT IN SYNC");
@@ -67,30 +65,18 @@ public class Main extends javax.swing.JFrame {
         masterPanel.add(mainMenu, "mainMenu");
         masterPanel.add(optionsPanel1, "optionsPanel");
         masterPanel.add(levelSelect1, "levelPanel");
-
-        playPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                playPanelKeyPressed(evt);
-            }
-        });
-
-        jLabel2.setText("playing...");
-        jLabel2.setFocusable(false);
-        playPanel.add(jLabel2);
-
-        masterPanel.add(playPanel, "playPanel");
+        masterPanel.add(playPanel1, "playPanel");
 
         getContentPane().add(masterPanel, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void playPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_playPanelKeyPressed
-        // TODO add your handling code here:
-        int key = evt.getKeyCode();
-        keyMapper.validateKey(key);
-    }//GEN-LAST:event_playPanelKeyPressed
-
+    public void launchGame(String levelName, String difficulty) {
+        playPanel1.startGame(levelName, difficulty);
+        swapCard(masterPanel, "playPanel");
+    }
+    
     public void swapCard(JComponent comp, String name) {
         CardLayout card = (CardLayout) comp.getLayout();
         card.show(comp, name);
@@ -124,11 +110,10 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JLabel jLabel2;
     private App.Panels.LevelSelect levelSelect1;
     private App.Panels.MainMenu mainMenu;
     private javax.swing.JPanel masterPanel;
     private App.Panels.OptionsPanel optionsPanel1;
-    private javax.swing.JPanel playPanel;
+    private App.Panels.PlayPanel playPanel1;
     // End of variables declaration//GEN-END:variables
 }

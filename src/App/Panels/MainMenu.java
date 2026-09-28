@@ -63,6 +63,7 @@ public class MainMenu extends javax.swing.JPanel {
 
         mainPanel.setBackground(new java.awt.Color(199, 36, 44));
         mainPanel.setToolTipText("");
+        mainPanel.setFocusable(false);
         mainPanel.setLayout(new java.awt.GridLayout(2, 1));
 
         titlePanel.setBackground(new java.awt.Color(199, 36, 44));

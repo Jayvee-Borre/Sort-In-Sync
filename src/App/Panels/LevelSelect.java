@@ -6,15 +6,16 @@ package App.Panels;
 
 import App.Components.CustomLabel;
 import App.Components.CustomRadioButton;
+import App.Main;
 import Lib.Options;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import App.Panels.PlayPanel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,6 +23,7 @@ import javax.swing.JRadioButton;
  */
 public class LevelSelect extends javax.swing.JPanel {
     private JComponent masterPanel;
+    private Main main;
     private Options options;
     private String selectedLevel;
     
@@ -43,6 +45,8 @@ public class LevelSelect extends javax.swing.JPanel {
 
         bGroup1 = new javax.swing.ButtonGroup();
         topPanel = new javax.swing.JPanel();
+        backBtn = new App.Components.CustomButton();
+        controlsBtn = new App.Components.CustomButton();
         customButton1 = new App.Components.CustomButton();
         mainPanel = new javax.swing.JPanel();
         leaderboardPanel = new javax.swing.JPanel();
@@ -64,19 +68,32 @@ public class LevelSelect extends javax.swing.JPanel {
         playBtn = new App.Components.CustomButton();
 
         setBackground(new java.awt.Color(199, 36, 44));
+        setFocusable(false);
         setLayout(new java.awt.BorderLayout());
 
         topPanel.setBackground(new java.awt.Color(199, 36, 44));
+        topPanel.setFocusable(false);
         topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        customButton1.setText("BACK");
+        backBtn.setText("BACK");
+        backBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        backBtn.addActionListener(this::backPerformed);
+        topPanel.add(backBtn);
+
+        controlsBtn.setText("CONTROLS");
+        controlsBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        controlsBtn.addActionListener(this::controlsBtnActionPerformed);
+        topPanel.add(controlsBtn);
+
+        customButton1.setText("HELP");
         customButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        customButton1.addActionListener(this::backPerformed);
+        customButton1.addActionListener(this::customButton1ActionPerformed);
         topPanel.add(customButton1);
 
         add(topPanel, java.awt.BorderLayout.NORTH);
 
         mainPanel.setBackground(new java.awt.Color(199, 36, 44));
+        mainPanel.setFocusable(false);
         mainPanel.setLayout(new java.awt.GridLayout(1, 3));
 
         leaderboardPanel.setBackground(new java.awt.Color(199, 36, 44));
@@ -207,6 +224,10 @@ public class LevelSelect extends javax.swing.JPanel {
         this.options = options;
     }
     
+    public void setMain(Main main) {
+        this.main = main;
+    }
+    
     private void backPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backPerformed
         // TODO add your handling code here:
         if (this.masterPanel == null) {
@@ -219,17 +240,19 @@ public class LevelSelect extends javax.swing.JPanel {
     }//GEN-LAST:event_backPerformed
 
     private void playButtonPressed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonPressed
-        // TODO add your handling code here:
-        if (this.masterPanel == null) return;
-       
-        swapCard(masterPanel, "playPanel");
+        if (this.masterPanel == null || this.main == null) return;
+   
+        String selectedDifficulty = "Normal"; 
         for (Component comp : jPanel1.getComponents()) {
             if (comp instanceof CustomRadioButton) {
-                boolean selected = ((CustomRadioButton) comp).isSelected();
-                System.out.println(selected);
-                
+                if (((CustomRadioButton) comp).isSelected()) {
+                    selectedDifficulty = ((CustomRadioButton) comp).getText();
+                }
             }
         }
+
+        System.out.println("[Event]: Playing level: " + selectedLevel + " on " + selectedDifficulty);
+        main.launchGame(selectedLevel, selectedDifficulty);
     }//GEN-LAST:event_playButtonPressed
 
     /*
@@ -265,7 +288,6 @@ public class LevelSelect extends javax.swing.JPanel {
             extractText(level3);
             selectedLevel = "Level3";
         }
-        System.out.println(selectedLevel);
         JPanel panel = (JPanel) evt.getComponent();
         Color clr = options.getBgColor();
         for (int i = 0; i < 2; i++) {
@@ -282,9 +304,23 @@ public class LevelSelect extends javax.swing.JPanel {
         clr = options.computeHoverColor(clr);
         panel.setBackground(clr);
     }//GEN-LAST:event_levelMouseRelease
- 
+
+    private void controlsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlsBtnActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(masterPanel, "Left Arrow Key -> Biodegradable\n"
+                + "Down Arrow Key -> Recyclable\n"
+                + "Up Arrow Key -> Hazardous\n"
+                + "Right Arrow Key -> Residual / General Waste", "Controls", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_controlsBtnActionPerformed
+
+    private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
+        // TODO add your handling code here:
+        // TODO: add code here to show what types of keys you need to press for what
+    }//GEN-LAST:event_customButton1ActionPerformed
+
+    // Enables or disables button
     private void setButtonHelper(boolean bool) {
-        playBtn.enableInputMethods(bool);
+        playBtn.setEnabled(bool);
         for (Component comp : jPanel1.getComponents()) {
             if (comp instanceof CustomRadioButton) {
                 ((CustomRadioButton) comp).setEnabled(bool);
@@ -292,6 +328,7 @@ public class LevelSelect extends javax.swing.JPanel {
         }
     }
     
+    // Sets button states
     private void setButtonStates() {
         if (selectedLevel == null) {
             System.out.println("[Error]: No Levels Selected.");
@@ -306,7 +343,7 @@ public class LevelSelect extends javax.swing.JPanel {
         for (Component comp : component.getComponents()) {
            if (comp instanceof CustomLabel) {
                String txt = ((JLabel) comp).getText();
-               System.out.println("Extracted txt: " + txt);
+               System.out.println("[Data]: Extracted txt: " + txt);
            } 
         }
     }
@@ -318,6 +355,8 @@ public class LevelSelect extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bGroup1;
+    private App.Components.CustomButton backBtn;
+    private App.Components.CustomButton controlsBtn;
     private App.Components.CustomButton customButton1;
     private App.Components.CustomLabel customLabel1;
     private App.Components.CustomLabel customLabel2;
