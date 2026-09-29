@@ -258,6 +258,9 @@
                       <Font name="Segoe UI" size="14" style="1"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="difficultyRBItemStateChanged"/>
+                  </Events>
                 </Component>
                 <Component class="App.Components.CustomRadioButton" name="normalRB">
                   <Properties>
@@ -270,6 +273,9 @@
                       <Font name="Segoe UI" size="14" style="1"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="difficultyRBItemStateChanged"/>
+                  </Events>
                 </Component>
                 <Component class="App.Components.CustomRadioButton" name="hardRB">
                   <Properties>
@@ -282,6 +288,9 @@
                       <Font name="Segoe UI" size="14" style="1"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="difficultyRBItemStateChanged"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

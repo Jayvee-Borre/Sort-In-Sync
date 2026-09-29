@@ -4,7 +4,12 @@
  */
 package App.Panels;
 import Lib.Note;
+import Lib.SongLoader;
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -20,44 +25,43 @@ import java.io.File;
  * @author Jayvee
  */
 public class PlayPanel extends javax.swing.JPanel {
+    private int totalPoints = 0;
+    private int currentCombo = 0;
     private Timer dt;
     private long startTime;
-    private int scroll_speed;
-    private List<Note> activeNotes;
+    private List<Note> notes;
     private int currentNoteIndex = 0;
     private int HIT_WINDOW = 300;
     private JComponent masterPanel;
     private Clip songClip;
-    ImageIcon[] bioAssets = {
+    private ImageIcon[] bioAssets = {
         new ImageIcon(getClass().getResource("/Assets/bio_trash/eggshells.png")),
         new ImageIcon(getClass().getResource("/Assets/bio_trash/fish_bone.png")),
+        
+    };
+    private ImageIcon[] recycleAssets = {
+        new ImageIcon(getClass().getResource("/Assets/bio_trash/apple_core.png"))
+    };
+    private ImageIcon[] hazardAssets = {
         new ImageIcon(getClass().getResource("/Assets/bio_trash/withered_leaf.png"))
     };
-    ImageIcon[] recycleAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/apple_core.png"))
-    };
-    ImageIcon[] hazardAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/apple_core.png"))
-    };
-    ImageIcon[] residualAssets = {
+    private ImageIcon[] residualAssets = {
         new ImageIcon(getClass().getResource("/Assets/bio_trash/banana_peel.png"))
     };
-    /**
-     * Creates new form PlayPanel
-     */
+    
     public PlayPanel() {
         initComponents();
         
         this.setFocusable(true);
         
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+        this.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentShown(java.awt.event.ComponentEvent e) {
+            public void componentShown(ComponentEvent e) {
                 PlayPanel.this.requestFocusInWindow();
             }
         });
     }
-
+    
     public void setMasterPanel(JComponent masterPanel) {
         this.masterPanel = masterPanel;
     }
@@ -77,7 +81,16 @@ public class PlayPanel extends javax.swing.JPanel {
         goBackBtn = new App.Components.CustomButton();
         gameplayPanel = new javax.swing.JPanel();
         comboPanel = new javax.swing.JPanel();
-        customLabel2 = new App.Components.CustomLabel();
+        hpPanel = new javax.swing.JPanel();
+        comboLabelTitle2 = new App.Components.CustomLabel();
+        comboLabelTitle3 = new App.Components.CustomLabel();
+        comboScorePanel = new javax.swing.JPanel();
+        comboLabelTitle = new App.Components.CustomLabel();
+        comboLabelScore = new App.Components.CustomLabel();
+        totalScorePanel = new javax.swing.JPanel();
+        comboLabelTitle1 = new App.Components.CustomLabel();
+        totalScoreLabel = new App.Components.CustomLabel();
+        binCapacityPanel = new javax.swing.JPanel();
         powerupPanel = new javax.swing.JPanel();
         powerup1Panel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -131,11 +144,65 @@ public class PlayPanel extends javax.swing.JPanel {
         gameplayPanel.setLayout(new java.awt.BorderLayout());
 
         comboPanel.setBackground(new java.awt.Color(199, 36, 44));
+        comboPanel.setLayout(new java.awt.GridLayout(4, 1));
 
-        customLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        customLabel2.setText("customLabel2");
-        customLabel2.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        comboPanel.add(customLabel2);
+        hpPanel.setBackground(new java.awt.Color(199, 36, 44));
+        hpPanel.setLayout(new java.awt.BorderLayout());
+
+        comboLabelTitle2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        comboLabelTitle2.setText("HP");
+        comboLabelTitle2.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        hpPanel.add(comboLabelTitle2, java.awt.BorderLayout.NORTH);
+
+        comboLabelTitle3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        comboLabelTitle3.setText("100");
+        comboLabelTitle3.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        hpPanel.add(comboLabelTitle3, java.awt.BorderLayout.CENTER);
+
+        comboPanel.add(hpPanel);
+
+        comboScorePanel.setBackground(new java.awt.Color(199, 36, 44));
+        comboScorePanel.setLayout(new java.awt.BorderLayout());
+
+        comboLabelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        comboLabelTitle.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        comboScorePanel.add(comboLabelTitle, java.awt.BorderLayout.NORTH);
+
+        comboLabelScore.setBackground(new java.awt.Color(199, 36, 44));
+        comboLabelScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        comboLabelScore.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        comboScorePanel.add(comboLabelScore, java.awt.BorderLayout.CENTER);
+
+        comboPanel.add(comboScorePanel);
+
+        totalScorePanel.setBackground(new java.awt.Color(199, 36, 44));
+        totalScorePanel.setLayout(new java.awt.BorderLayout());
+
+        comboLabelTitle1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        comboLabelTitle1.setText("SCORE");
+        comboLabelTitle1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        totalScorePanel.add(comboLabelTitle1, java.awt.BorderLayout.NORTH);
+
+        totalScoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        totalScoreLabel.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        totalScorePanel.add(totalScoreLabel, java.awt.BorderLayout.CENTER);
+
+        comboPanel.add(totalScorePanel);
+
+        binCapacityPanel.setBackground(new java.awt.Color(199, 36, 44));
+
+        javax.swing.GroupLayout binCapacityPanelLayout = new javax.swing.GroupLayout(binCapacityPanel);
+        binCapacityPanel.setLayout(binCapacityPanelLayout);
+        binCapacityPanelLayout.setHorizontalGroup(
+            binCapacityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 112, Short.MAX_VALUE)
+        );
+        binCapacityPanelLayout.setVerticalGroup(
+            binCapacityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 70, Short.MAX_VALUE)
+        );
+
+        comboPanel.add(binCapacityPanel);
 
         gameplayPanel.add(comboPanel, java.awt.BorderLayout.LINE_START);
 
@@ -144,21 +211,21 @@ public class PlayPanel extends javax.swing.JPanel {
 
         powerup1Panel.setBackground(new java.awt.Color(199, 36, 44));
 
-        jLabel2.setText("jLabel2");
+        jLabel2.setText("Fertilizer Boost");
         powerup1Panel.add(jLabel2);
 
         powerupPanel.add(powerup1Panel);
 
         powerup2Panel.setBackground(new java.awt.Color(199, 36, 44));
 
-        jLabel3.setText("jLabel3");
+        jLabel3.setText("Material Shield");
         powerup2Panel.add(jLabel3);
 
         powerupPanel.add(powerup2Panel);
 
         powerup3Panel.setBackground(new java.awt.Color(199, 36, 44));
 
-        jLabel4.setText("jLabel4");
+        jLabel4.setText("System Purge");
         powerup3Panel.add(jLabel4);
 
         powerupPanel.add(powerup3Panel);
@@ -186,8 +253,6 @@ public class PlayPanel extends javax.swing.JPanel {
 
         upcomingPanel.setBackground(new java.awt.Color(199, 36, 44));
         upcomingPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel6.setText("jLabel6");
         upcomingPanel.add(jLabel6, java.awt.BorderLayout.CENTER);
 
         hitboxPanel.add(upcomingPanel);
@@ -195,8 +260,6 @@ public class PlayPanel extends javax.swing.JPanel {
         currentPanel.setBackground(new java.awt.Color(199, 36, 44));
         currentPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51)));
         currentPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel7.setText("jLabel7");
         currentPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
 
         hitboxPanel.add(currentPanel);
@@ -208,178 +271,198 @@ public class PlayPanel extends javax.swing.JPanel {
         add(gameplayPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    // Stop timer/song if they are still running and go back to level select
     private void goBackBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackBtnActionPerformed
         if (dt != null && dt.isRunning()) dt.stop();
-        if (songClip != null && songClip.isRunning()) songClip.stop();
+        if (songClip != null && songClip.isRunning()) {
+            songClip.stop();
+            songClip.close();
+        }
         swapCard(masterPanel, "levelPanel");
     }//GEN-LAST:event_goBackBtnActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         int key = evt.getKeyCode();
         String pressedKey = "";
-
         switch (key) {
-            case KeyEvent.VK_LEFT:
-                binIcon.setText("Biodegradable Bin");
-                pressedKey = "L";
-                break;
-            case KeyEvent.VK_DOWN:
-                binIcon.setText("Recyclable Bin");
-                pressedKey = "D";
-                break;
-            case KeyEvent.VK_UP:
+            case KeyEvent.VK_UP: 
                 binIcon.setText("Hazardous Bin");
                 pressedKey = "U";
                 break;
-            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_DOWN: 
+                binIcon.setText("Recyclable Bin");
+                pressedKey = "D";
+                break;
+            case KeyEvent.VK_LEFT: 
+                binIcon.setText("Biodegradable Bin");
+                pressedKey = "L";
+                break;
+            case KeyEvent.VK_RIGHT: 
                 binIcon.setText("Residual / General Waste Bin");
                 pressedKey = "R";
                 break;
+            default: return;
         }
-
-        if (!pressedKey.isEmpty() && activeNotes != null && currentNoteIndex < activeNotes.size()) {
-            long currentSongTime = System.currentTimeMillis() - startTime;
-            Note currentNote = activeNotes.get(currentNoteIndex);
-            long timeDifference = currentSongTime - currentNote.timeMs;
-
-            // Check if the press was inside the valid timing window
-            if (Math.abs(timeDifference) <= HIT_WINDOW) {
-                if (currentNote.keys.contains(pressedKey)) {
-                    System.out.println("[Hit]: Correct Bin! +" + Math.abs(timeDifference) + "ms off");
-                    // TODO: Add points
-                } else {
-                    System.out.println("[Miss]: Wrong Bin!");
-                    // TODO: Break combo
+        
+        // If the key is not empty, notes is not yet finished
+        if (!pressedKey.isEmpty() && notes != null) {
+            if (currentNoteIndex < notes.size()) {
+                long currentSongTime = System.currentTimeMillis() - startTime;
+                Note currentNote = notes.get(currentNoteIndex);
+                long diff = currentSongTime - currentNote.timeMs;
+                
+                if (Math.abs(diff) < HIT_WINDOW) { // calculate difference between note hit and hit window
+                    if (currentNote.keys.contains(pressedKey)) {
+                        System.out.println("[HIT]: Correct bin was pressed -> " + Math.abs(diff));
+                        currentCombo++;
+                        totalPoints = totalPoints + 300 + (300 * currentCombo);
+                        totalScoreLabel.setText(Integer.toString(totalPoints));
+                    } else {
+                        System.out.println("[MISS]: Wrong Bin");
+                        currentCombo = 0;
+                        comboLabelTitle.setText("");
+                        comboLabelScore.setText("");
+                    }
+                    currentNoteIndex++;
+                    updateConveyor();
+                } else if (diff < -HIT_WINDOW) { // early hit
+                    System.out.println("[MISS] Too early");
+                    currentNoteIndex++;
+                    currentCombo = 0;
+                    comboLabelTitle.setText("");
+                    comboLabelScore.setText("");
+                    updateConveyor();
                 }
-                currentNoteIndex++;
-                updateConveyor();
-
-            } else if (timeDifference < -HIT_WINDOW) {
-                // MASH PENALTY: They pressed a button way too early
-                System.out.println("[Miss]: Pressed too early!");
-                // TODO: Break combo
-
-                currentNoteIndex++;
-                updateConveyor();
             }
         }
     }//GEN-LAST:event_formKeyPressed
 
+    private void checkDifficulty(String difficulty) {
+        System.out.println("[Check]: Current difficulty: " + difficulty);
+        switch (difficulty) {
+            case "Easy": HIT_WINDOW = 600; break;
+            case "Normal": HIT_WINDOW = 400; break;
+            case "Hard": HIT_WINDOW = 200; break;
+        }
+    }
+    
     private void swapCard(JComponent comp, String name) {
         CardLayout card = (CardLayout) comp.getLayout();
         card.show(comp, name);
     }
     
-    public void startGame(String filename, String difficulty) {
-        Lib.SongLoader loader = new Lib.SongLoader(filename);
-        loader.loadChart("src/Charts/" + filename + ".sr");
-        this.activeNotes = loader.getNotes();
-
-        if (this.activeNotes != null) {
-            assignImagesToNotes(this.activeNotes);
-        } else {
-            System.out.println("[Error]: No notes were loaded from the chart!");
-            return;
-        }
-
+    public void startGame(String levelName, String difficulty) {
+        checkDifficulty(difficulty);
+        SongLoader song = new SongLoader();
+        song.loadChart("src/Charts/" + levelName + ".sr");
+        notes = song.getNotes();
+        assignImagesToNotes(notes);
+        
+        currentCombo = 0;
         currentNoteIndex = 0;
+        totalPoints = 0;
+        
+        comboLabelTitle.setText("");
+        comboLabelScore.setText("");
+        totalScoreLabel.setText("0");
+        
         updateConveyor();
+        
+        loadSong(levelName);
+        startTime = System.currentTimeMillis();
+        songClip.start();
+        dt = new Timer(16, (ActionEvent e) -> {
+            if (currentCombo > 0) {
+                comboLabelTitle.setText("COMBO");
+                comboLabelScore.setText("x"+ Integer.toString(currentCombo));
+            }
+            long currentSongTime = System.currentTimeMillis() - startTime;
+            
+            if (notes != null && currentNoteIndex < notes.size()) {
+                Note currentNote = notes.get(currentNoteIndex);
+                long timeToNote = currentNote.timeMs - currentSongTime;
 
-        // Load and prepare the audio clip (Ensure file is converted to .wav)
+                // visual indicator for time to hit
+                if (Math.abs(timeToNote) <= HIT_WINDOW) {
+                    currentPanel.setBackground(new java.awt.Color(50, 205, 50)); 
+                } else {
+                    currentPanel.setBackground(new java.awt.Color(199, 36, 44)); 
+                }
+                
+                // Player missed
+                if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
+                    System.out.println("[MISS]: Player missed");
+                    currentCombo = 0;
+                    comboLabelTitle.setText("");
+                    comboLabelScore.setText("");
+                    currentNoteIndex++;
+                    currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
+                    updateConveyor();
+                }
+            } else if (notes != null && currentNoteIndex >= notes.size()) {
+                System.out.println("[Finish]: Level finished.");
+                dt.stop();
+                if (songClip != null) {
+                    songClip.stop();
+                    songClip.close();
+                }
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "Level Complete!\nFinal Score: " + totalPoints);
+            
+                swapCard(masterPanel, "levelPanel"); 
+            }
+        });
+        
+        dt.start();
+    }
+    
+    private void loadSong(String levelName) {
         try {
-            File audioFile = new File("src/Songs/" + filename + ".wav");
+            File audioFile = new File("src/Songs/" + levelName + ".wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             songClip = AudioSystem.getClip();
             songClip.open(audioStream);
         } catch (Exception e) {
-            System.out.println("[Error]: Could not load audio - " + e.getMessage());
-        }
-
-        startTime = System.currentTimeMillis();
-
-        // Start the music right before the timer
-        if (songClip != null) {
-            songClip.setFramePosition(0); // Rewind to start
-            songClip.start();
-        }
-
-        dt = new Timer(16, (java.awt.event.ActionEvent e) -> {
-            long currentSongTime = System.currentTimeMillis() - startTime;
-
-            if (activeNotes != null && currentNoteIndex < activeNotes.size()) {
-                Note currentNote = activeNotes.get(currentNoteIndex);
-                long timeToNote = currentNote.timeMs - currentSongTime;
-
-                // Visual Indicator: Change background to Green when it's time to press
-                if (Math.abs(timeToNote) <= HIT_WINDOW) {
-                    currentPanel.setBackground(new java.awt.Color(50, 205, 50)); // Lime Green
-                } else {
-                    currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Default Red
-                }
-
-                // Check if the user completely missed the window by being too slow
-                if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
-                    System.out.println("[Miss]: Too slow!");
-                    currentNoteIndex++;
-                    updateConveyor();
-                    // Reset color immediately after a miss
-                    currentPanel.setBackground(new java.awt.Color(199, 36, 44));
-                }
-            } else {
-                System.out.println("[Notice]: Level Finished!");
-                currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset color
-                dt.stop();
-                if (songClip != null) songClip.stop();
-            }
-        });
-
-        dt.start();
-    }
-
-    public void assignImagesToNotes(List<Note> activeNotes) {
-        for (Note n : activeNotes) {
-            if (n.keys.contains("L")) {
-                int randomIndex = (int) (Math.random() * bioAssets.length);
-                n.icon = bioAssets[randomIndex];
-            }
-            
-            if (n.keys.contains("D")) {
-                int randomIndex = (int) (Math.random() * recycleAssets.length);
-                n.icon = recycleAssets[randomIndex]; // Changed from bioAssets
-            }
-
-            if (n.keys.contains("U")) {
-                int randomIndex = (int) (Math.random() * hazardAssets.length);
-                n.icon = hazardAssets[randomIndex]; // Changed from bioAssets
-            }
-
-            if (n.keys.contains("R")) {
-                int randomIndex = (int) (Math.random() * residualAssets.length);
-                n.icon = residualAssets[randomIndex]; // Changed from bioAssets
-            }
+            System.out.println("[Error]: Could not load song.");
         }
     }
     
+    // Assign the images to the notes
+    private void assignImagesToNotes(List<Note> activeNotes) {
+        for (Note n : activeNotes) {
+            if (n.keys.contains("L") && bioAssets.length > 0) {
+                n.icon = bioAssets[(int) (Math.random() * bioAssets.length)];
+            } else if (n.keys.contains("D") && recycleAssets.length > 0) {
+                n.icon = recycleAssets[(int) (Math.random() * recycleAssets.length)];
+            } else if (n.keys.contains("U") && hazardAssets.length > 0) {
+                n.icon = hazardAssets[(int) (Math.random() * hazardAssets.length)];
+            } else if (n.keys.contains("R") && residualAssets.length > 0) {
+                n.icon = residualAssets[(int) (Math.random() * residualAssets.length)];
+            }
+        }
+    }
+
+    // Update the current conveyor item
     private void updateConveyor() {
-        if (activeNotes == null || currentNoteIndex >= activeNotes.size()) {
+        if (notes == null || currentNoteIndex >= notes.size()) {
             jLabel7.setIcon(null); // Clear Current
             jLabel6.setIcon(null); // Clear Upcoming
             return;
         }
 
-        // 1. Set the Current Trash Icon
-        jLabel7.setIcon(activeNotes.get(currentNoteIndex).icon);
+        // Set Current Trash
+        jLabel7.setIcon(notes.get(currentNoteIndex).icon);
 
-        // 2. Set the Upcoming Trash Icon (with 50% opacity)
-        if (currentNoteIndex + 1 < activeNotes.size()) {
-            ImageIcon nextIcon = activeNotes.get(currentNoteIndex + 1).icon;
-            jLabel6.setIcon(makeTranslucent(nextIcon, 0.5f)); // 50% opacity
+        // Set Upcoming Trash (50% Opacity)
+        if (currentNoteIndex + 1 < notes.size()) {
+            ImageIcon nextIcon = notes.get(currentNoteIndex + 1).icon;
+            jLabel6.setIcon(makeTranslucent(nextIcon, 0.5f));
         } else {
-            jLabel6.setIcon(null); // No more notes left
+            jLabel6.setIcon(null);
         }
     }
 
-    // Helper method to apply opacity to standard ImageIcons
+    // Make icon 50% opacity
     private ImageIcon makeTranslucent(ImageIcon original, float alpha) {
         if (original == null) return null;
         java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(
@@ -392,15 +475,22 @@ public class PlayPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel binCapacityPanel;
     private javax.swing.JLabel binIcon;
     private javax.swing.JPanel binPanel;
+    private App.Components.CustomLabel comboLabelScore;
+    private App.Components.CustomLabel comboLabelTitle;
+    private App.Components.CustomLabel comboLabelTitle1;
+    private App.Components.CustomLabel comboLabelTitle2;
+    private App.Components.CustomLabel comboLabelTitle3;
     private javax.swing.JPanel comboPanel;
+    private javax.swing.JPanel comboScorePanel;
     private javax.swing.JPanel currentPanel;
-    private App.Components.CustomLabel customLabel2;
     private javax.swing.JPanel gameplayPanel;
     private App.Components.CustomButton goBackBtn;
     private javax.swing.JPanel goBackPanel;
     private javax.swing.JPanel hitboxPanel;
+    private javax.swing.JPanel hpPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -415,6 +505,8 @@ public class PlayPanel extends javax.swing.JPanel {
     private javax.swing.JPanel powerup3Panel;
     private javax.swing.JPanel powerup4Panel;
     private javax.swing.JPanel powerupPanel;
+    private App.Components.CustomLabel totalScoreLabel;
+    private javax.swing.JPanel totalScorePanel;
     private javax.swing.JPanel upcomingPanel;
     // End of variables declaration//GEN-END:variables
 }

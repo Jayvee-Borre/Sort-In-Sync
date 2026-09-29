@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package App.Panels;
-
+import App.Panels.PlayPanel;
 import App.Components.CustomLabel;
 import App.Components.CustomRadioButton;
 import App.Main;
@@ -11,10 +11,10 @@ import Lib.Options;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import App.Panels.PlayPanel;
 import javax.swing.JOptionPane;
 
 /**
@@ -189,18 +189,21 @@ public class LevelSelect extends javax.swing.JPanel {
         easyRB.setText("Easy");
         easyRB.setEnabled(false);
         easyRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        easyRB.addItemListener(this::difficultyRBItemStateChanged);
         jPanel1.add(easyRB);
 
         bGroup1.add(normalRB);
         normalRB.setText("Normal");
         normalRB.setEnabled(false);
         normalRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        normalRB.addItemListener(this::difficultyRBItemStateChanged);
         jPanel1.add(normalRB);
 
         bGroup1.add(hardRB);
         hardRB.setText("Hard");
         hardRB.setEnabled(false);
         hardRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        hardRB.addItemListener(this::difficultyRBItemStateChanged);
         jPanel1.add(hardRB);
 
         settingsPanel.add(jPanel1);
@@ -229,13 +232,8 @@ public class LevelSelect extends javax.swing.JPanel {
     }
     
     private void backPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backPerformed
-        // TODO add your handling code here:
-        if (this.masterPanel == null) {
-            System.out.println("[Error]: masterPanel was never set on MainMenu - call setMasterPanel() from Main's constructor.");
-            return;
-        }
-        System.out.println("[Changed-Panel]: Level Select -> Main Menu");
-        bGroup1.clearSelection();
+        if (this.masterPanel == null) return; // Master Panel was not set
+        resetComponents();
         this.swapCard(masterPanel, "mainMenu");
     }//GEN-LAST:event_backPerformed
 
@@ -250,8 +248,8 @@ public class LevelSelect extends javax.swing.JPanel {
                 }
             }
         }
-
-        System.out.println("[Event]: Playing level: " + selectedLevel + " on " + selectedDifficulty);
+        
+        resetComponents();
         main.launchGame(selectedLevel, selectedDifficulty);
     }//GEN-LAST:event_playButtonPressed
 
@@ -276,27 +274,18 @@ public class LevelSelect extends javax.swing.JPanel {
 
     private void levelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMousePressed
         // TODO add your handling code here:
+        panelIsClicked(evt); // 
         if (evt.getSource() == level1) {
-            extractText(level1);
-            selectedLevel = "Canon";
+            selectedLevel = extractText(level1);
+        } else if (evt.getSource() == level2) { 
+            selectedLevel = extractText(level2);
+        } else if (evt.getSource() == level3) {
+            selectedLevel = extractText(level3);
         }
-        else if (evt.getSource() == level2) { 
-            extractText(level2);
-            selectedLevel = "Level2";
-        } 
-        else if (evt.getSource() == level3) {
-            extractText(level3);
-            selectedLevel = "Level3";
-        }
-        JPanel panel = (JPanel) evt.getComponent();
-        Color clr = options.getBgColor();
-        for (int i = 0; i < 2; i++) {
-            clr = options.computeHoverColor(clr);
-        }
-        panel.setBackground(clr);
-        setButtonStates();
+        
+        enableComponents(true);
     }//GEN-LAST:event_levelMousePressed
-    
+        
     private void levelMouseRelease(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseRelease
         // TODO add your handling code here:
         JPanel panel = (JPanel) evt.getComponent();
@@ -316,11 +305,32 @@ public class LevelSelect extends javax.swing.JPanel {
     private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
         // TODO add your handling code here:
         // TODO: add code here to show what types of keys you need to press for what
+        JOptionPane.showMessageDialog(masterPanel, "Add content later.", "Help", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_customButton1ActionPerformed
 
+    private void difficultyRBItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_difficultyRBItemStateChanged
+        // TODO add your handling code here:
+        enableComponent(playBtn, true);
+    }//GEN-LAST:event_difficultyRBItemStateChanged
+
+    private void resetComponents() {
+        bGroup1.clearSelection();
+        enableComponents(false);
+        enableComponent(playBtn, false);
+    }
+    
+    private void panelIsClicked(MouseEvent evt) {
+        JPanel panel = (JPanel) evt.getComponent();
+        Color clr = options.getBgColor();
+        for (int i = 0; i < 2; i++) {
+            clr = options.computeHoverColor(clr);
+        }
+        
+        panel.setBackground(clr);
+    }
+    
     // Enables or disables button
-    private void setButtonHelper(boolean bool) {
-        playBtn.setEnabled(bool);
+    private void enableComponents(boolean bool) {
         for (Component comp : jPanel1.getComponents()) {
             if (comp instanceof CustomRadioButton) {
                 ((CustomRadioButton) comp).setEnabled(bool);
@@ -328,24 +338,19 @@ public class LevelSelect extends javax.swing.JPanel {
         }
     }
     
-    // Sets button states
-    private void setButtonStates() {
-        if (selectedLevel == null) {
-            System.out.println("[Error]: No Levels Selected.");
-            setButtonHelper(false);
-            return;
-        }
-        setButtonHelper(true);
+    public void enableComponent(JComponent comp, boolean bool) {
+        comp.setEnabled(bool);
     }
     
-    private void extractText(JComponent component) {
-        // System.out.println(component);
+    // Get Text of the JLabel
+    private String extractText(JComponent component) {
         for (Component comp : component.getComponents()) {
            if (comp instanceof CustomLabel) {
                String txt = ((JLabel) comp).getText();
-               System.out.println("[Data]: Extracted txt: " + txt);
+               return txt;
            } 
         }
+        return null;
     }
     
     private void swapCard(JComponent comp, String name) {
