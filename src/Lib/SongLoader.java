@@ -13,14 +13,9 @@ import java.util.List;
  * @author Jayvee
  */
 public class SongLoader {
-    private String fileName;
     private List<Note> notes = new ArrayList<>();
     public int bpm;
     public String audioFile;
-    
-    public SongLoader(String fileName) {
-        this.fileName = fileName;
-    }
     
     public SongLoader() {
         
