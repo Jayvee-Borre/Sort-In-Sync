@@ -15,8 +15,8 @@ import javax.swing.JComponent;
 public class Main extends javax.swing.JFrame {
     private boolean userExists;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
-    private Options options = new Options(this); // Handler for logic during method listener calls
-    private Database database = new Database();
+    private Database database = new Database(); // Must come before options (Options needs it)
+    private Options options = new Options(this, database); // Handler for logic during method listener calls
     private String currentLevel;
     /**
      * Creates new form Main
@@ -27,6 +27,7 @@ public class Main extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         
         mainMenu.setMasterPanel(masterPanel);
+        mainMenu.setOptions(options); // So login/sign out can tell Options who the current user is
         optionsPanel1.setMasterPanel(masterPanel);
         optionsPanel1.setOptions(options);
         playPanel1.setMasterPanel(masterPanel);

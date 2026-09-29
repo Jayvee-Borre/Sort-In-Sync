@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import Services.Database;
+import Lib.Options;
 import java.awt.CardLayout;
 import java.beans.Beans;
 import javax.swing.JComponent;
@@ -18,6 +19,7 @@ import javax.swing.JComponent;
 public class MainMenu extends javax.swing.JPanel {
     private Database database;
     private JComponent masterPanel;
+    private Options options; // Set by Main; used to save settings for the logged-in user
     private static final System.Logger LOG = System.getLogger(MainMenu.class.getName());
     /**
      * Creates new form MainMenu
@@ -32,6 +34,10 @@ public class MainMenu extends javax.swing.JPanel {
 
     public void setMasterPanel(JComponent masterPanel) {
         this.masterPanel = masterPanel;
+    }
+    
+    public void setOptions(Options options) {
+        this.options = options;
     }
     
     /**
@@ -163,6 +169,9 @@ public class MainMenu extends javax.swing.JPanel {
                 if (database.validateLogin(user, pass)) {
                     System.out.println("[Success]: Logged in as: " + user);
                     userText.setText("Logged in as: "+ user);
+                    if (options != null) {
+                        options.setCurrentUser(database.getUserId(user)); // Settings now save for this user
+                    }
                     // TODO: once a "currently logged in as" label exists on this
                     // panel, set its text here (e.g. currentUserText.setText("Logged in as: " + user);)
                     this.swapCard(bottomPanel, "loggedIn");
@@ -195,6 +204,9 @@ public class MainMenu extends javax.swing.JPanel {
         if (option == JOptionPane.OK_OPTION) {
             System.out.println("[Notice]: Signed out.");
             userText.setText("");
+            if (options != null) {
+                options.setCurrentUser(Options.GUEST); // Stop saving settings for the old user
+            }
             // TODO: clear the "currently logged in as" label here too, once it exists
             this.swapCard(bottomPanel, "loggedOut");
         }
