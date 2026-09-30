@@ -1,0 +1,35 @@
+[METADATA]
+title="TwoTigers - Easy"
+bpm=128
+audioFile="TwoTigers.wav"
+offsetMs=0
+
+// <beatTimeInMs>,<correctKeyBindMap>
+// keys -> L = left, D = down, U = up, R = right
+
+[NOTES]
+1000,L
+2875,L
+4750,U
+6625,U
+8500,L
+10375,L
+12250,U
+14125,U
+16000,L
+17875,L
+19750,U
+21625,U
+23500,L
+25375,L
+27250,U
+29125,U
+31000,L
+32875,L
+34750,U
+36625,U
+38500,L
+40375,L
+42250,U
+44125,U
+45069,U

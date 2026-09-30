@@ -1,0 +1,44 @@
+[METADATA]
+title="BeyerNo8 - Easy"
+bpm=115
+audioFile="BeyerNo8.wav"
+offsetMs=0
+
+// <beatTimeInMs>,<correctKeyBindMap>
+// keys -> L = left, D = down, U = up, R = right
+
+[NOTES]
+1000,L
+3087,U
+5174,U
+7261,L
+9348,L
+11435,U
+13522,U
+15609,L
+17696,L
+19783,U
+21870,U
+23957,L
+26043,L
+28130,U
+30217,U
+32304,L
+34391,L
+36478,U
+38565,U
+40652,L
+42739,L
+44826,U
+46913,U
+49000,L
+51087,L
+53174,U
+55261,U
+57348,L
+59435,L
+61522,U
+63609,U
+65696,L
+67783,L
+69391,D
