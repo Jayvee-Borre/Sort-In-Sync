@@ -64,6 +64,15 @@ public class Options {
         }
     }
     
+    public void changeVolume(int volume) {
+        currentVolume = volume;
+        persist();
+    }
+    
+    public int getVolume() {
+        return currentVolume;
+    }
+    
     public void changeTheme(JComboBox item) {
         String label = (String) item.getSelectedItem();
         if (label == null) return;
