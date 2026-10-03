@@ -53,6 +53,16 @@ public class LevelSelect extends javax.swing.JPanel {
         leaderboardTitle = new javax.swing.JPanel();
         customLabel4 = new App.Components.CustomLabel();
         leaderboardNames = new javax.swing.JPanel();
+        top1 = new App.Components.CustomLabel();
+        top2 = new App.Components.CustomLabel();
+        top3 = new App.Components.CustomLabel();
+        top4 = new App.Components.CustomLabel();
+        top5 = new App.Components.CustomLabel();
+        top6 = new App.Components.CustomLabel();
+        top7 = new App.Components.CustomLabel();
+        top8 = new App.Components.CustomLabel();
+        top9 = new App.Components.CustomLabel();
+        top10 = new App.Components.CustomLabel();
         levelsPanel = new javax.swing.JPanel();
         level1 = new javax.swing.JPanel();
         customLabel1 = new App.Components.CustomLabel();
@@ -60,6 +70,10 @@ public class LevelSelect extends javax.swing.JPanel {
         customLabel2 = new App.Components.CustomLabel();
         level3 = new javax.swing.JPanel();
         customLabel3 = new App.Components.CustomLabel();
+        level4 = new javax.swing.JPanel();
+        customLabel5 = new App.Components.CustomLabel();
+        level5 = new javax.swing.JPanel();
+        customLabel6 = new App.Components.CustomLabel();
         settingsPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         easyRB = new App.Components.CustomRadioButton();
@@ -108,12 +122,54 @@ public class LevelSelect extends javax.swing.JPanel {
         leaderboardPanel.add(leaderboardTitle, java.awt.BorderLayout.NORTH);
 
         leaderboardNames.setBackground(new java.awt.Color(199, 36, 44));
+        leaderboardNames.setLayout(new java.awt.GridLayout(10, 1));
+
+        top1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top1);
+
+        top2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top2);
+
+        top3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top3);
+
+        top4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top4.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top4);
+
+        top5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top5.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top5);
+
+        top6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top6);
+
+        top7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top7.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top7);
+
+        top8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top8.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top8);
+
+        top9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top9.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top9);
+
+        top10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        top10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        leaderboardNames.add(top10);
+
         leaderboardPanel.add(leaderboardNames, java.awt.BorderLayout.CENTER);
 
         mainPanel.add(leaderboardPanel);
 
         levelsPanel.setBackground(new java.awt.Color(199, 36, 44));
-        levelsPanel.setLayout(new java.awt.GridLayout(3, 1));
+        levelsPanel.setLayout(new java.awt.GridLayout(5, 1));
 
         level1.setBackground(new java.awt.Color(199, 36, 44));
         level1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -152,7 +208,7 @@ public class LevelSelect extends javax.swing.JPanel {
             }
         });
 
-        customLabel2.setText("Level 2");
+        customLabel2.setText("CanCan");
         level2.add(customLabel2);
 
         levelsPanel.add(level2);
@@ -173,10 +229,52 @@ public class LevelSelect extends javax.swing.JPanel {
             }
         });
 
-        customLabel3.setText("Level 3");
+        customLabel3.setText("TwoTigers");
         level3.add(customLabel3);
 
         levelsPanel.add(level3);
+
+        level4.setBackground(new java.awt.Color(199, 36, 44));
+        level4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelHoverMouse(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                hoverRemovedMouse(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                levelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                levelMouseRelease(evt);
+            }
+        });
+
+        customLabel5.setText("Spring");
+        level4.add(customLabel5);
+
+        levelsPanel.add(level4);
+
+        level5.setBackground(new java.awt.Color(199, 36, 44));
+        level5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelHoverMouse(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                hoverRemovedMouse(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                levelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                levelMouseRelease(evt);
+            }
+        });
+
+        customLabel6.setText("BeyerNo8");
+        level5.add(customLabel6);
+
+        levelsPanel.add(level5);
 
         mainPanel.add(levelsPanel);
 
@@ -193,7 +291,7 @@ public class LevelSelect extends javax.swing.JPanel {
         jPanel1.add(easyRB);
 
         bGroup1.add(normalRB);
-        normalRB.setText("Normal");
+        normalRB.setText("Medium");
         normalRB.setEnabled(false);
         normalRB.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         normalRB.addItemListener(this::difficultyRBItemStateChanged);
@@ -281,6 +379,10 @@ public class LevelSelect extends javax.swing.JPanel {
             selectedLevel = extractText(level2);
         } else if (evt.getSource() == level3) {
             selectedLevel = extractText(level3);
+        } else if (evt.getSource() == level4) {
+            selectedLevel = extractText(level4);
+        } else if (evt.getSource() == level5) {
+            selectedLevel = extractText(level5);
         }
         
         enableComponents(true);
@@ -367,6 +469,8 @@ public class LevelSelect extends javax.swing.JPanel {
     private App.Components.CustomLabel customLabel2;
     private App.Components.CustomLabel customLabel3;
     private App.Components.CustomLabel customLabel4;
+    private App.Components.CustomLabel customLabel5;
+    private App.Components.CustomLabel customLabel6;
     private App.Components.CustomRadioButton easyRB;
     private App.Components.CustomRadioButton hardRB;
     private javax.swing.JPanel jPanel1;
@@ -376,11 +480,23 @@ public class LevelSelect extends javax.swing.JPanel {
     private javax.swing.JPanel level1;
     private javax.swing.JPanel level2;
     private javax.swing.JPanel level3;
+    private javax.swing.JPanel level4;
+    private javax.swing.JPanel level5;
     private javax.swing.JPanel levelsPanel;
     private javax.swing.JPanel mainPanel;
     private App.Components.CustomRadioButton normalRB;
     private App.Components.CustomButton playBtn;
     private javax.swing.JPanel settingsPanel;
+    private App.Components.CustomLabel top1;
+    private App.Components.CustomLabel top10;
+    private App.Components.CustomLabel top2;
+    private App.Components.CustomLabel top3;
+    private App.Components.CustomLabel top4;
+    private App.Components.CustomLabel top5;
+    private App.Components.CustomLabel top6;
+    private App.Components.CustomLabel top7;
+    private App.Components.CustomLabel top8;
+    private App.Components.CustomLabel top9;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

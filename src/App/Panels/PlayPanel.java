@@ -7,7 +7,8 @@ import Lib.Note;
 import Lib.SongLoader;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.sound.sampled.FloatControl;
+import Lib.Options;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -25,8 +26,31 @@ import java.io.File;
  * @author Jayvee
  */
 public class PlayPanel extends javax.swing.JPanel {
+    // Power Ups
+    private boolean fertilizerIsActive;
+    private int fertilizerCount = 0;
+    private boolean matShieldIsActive;
+    private int matShieldCount = 0;
+    private boolean shouldPurge;
+    private int purgeCount = 0;
+    private boolean shouldIncinerate;
+    private int incinerateCount = 0;
+    
+    private final int MAX_BIN_CAPACITY = 10;
+    private int[] binCapacity = {0,0,0,0};
+    private int currentKey = 0; // this should represent UDLR
+    
+    // Health
+    private int currentHealth = 100;
+    private float healthChangeModifier = 0.1f;
+    private int healthChangeFactor = 10;
+    
+    // Points
     private int totalPoints = 0;
     private int currentCombo = 0;
+    
+    // Timer and Notes
+    private Options options;
     private Timer dt;
     private long startTime;
     private List<Note> notes;
@@ -34,19 +58,35 @@ public class PlayPanel extends javax.swing.JPanel {
     private int HIT_WINDOW = 300;
     private JComponent masterPanel;
     private Clip songClip;
-    private ImageIcon[] bioAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/eggshells.png")),
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/fish_bone.png")),
+    private final ImageIcon[] bioAssets = {
+        new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/apple_core.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/withered_leaf.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/eggshells.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/fish_bone.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/banana_peel.png"))
         
     };
-    private ImageIcon[] recycleAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/apple_core.png"))
+    private final ImageIcon[] recycleAssets = {
+        new ImageIcon(getClass().getResource("/Assets/wastes/recyclable_trash/Aluminum_Can.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/recyclable_trash/Glass_Jars_and_Bottles.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/recyclable_trash/Newspaper.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/recyclable_trash/Plastic_Detergent_Bottle.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/recyclable_trash/Water_Bottle.png"))
     };
-    private ImageIcon[] hazardAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/withered_leaf.png"))
+    private final ImageIcon[] hazardAssets = {
+        new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/AA_Battery.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Fluorescent_Lightbulb.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Insecticide_Aerosol_Can.png")),
     };
-    private ImageIcon[] residualAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bio_trash/banana_peel.png"))
+    private final ImageIcon[] residualAssets = {
+       new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Prescription_Pill_Bottle.png")) // Switch to hazard this is only for placeholder
+    };
+    
+    private final ImageIcon[] binAssets = {
+        new ImageIcon(getClass().getResource("/Assets/bins/biodegradable_bin.png")),
+        new ImageIcon(getClass().getResource("/Assets/bins/hazardous_bin.png")),
+        new ImageIcon(getClass().getResource("/Assets/bins/recyclable_bin.png")),
+        new ImageIcon(getClass().getResource("/Assets/bins/residual_bin.png"))
     };
     
     public PlayPanel() {
@@ -60,6 +100,10 @@ public class PlayPanel extends javax.swing.JPanel {
                 PlayPanel.this.requestFocusInWindow();
             }
         });
+    }
+    
+    public void setOptions(Options options) {
+        this.options = options;
     }
     
     public void setMasterPanel(JComponent masterPanel) {
@@ -82,8 +126,8 @@ public class PlayPanel extends javax.swing.JPanel {
         gameplayPanel = new javax.swing.JPanel();
         comboPanel = new javax.swing.JPanel();
         hpPanel = new javax.swing.JPanel();
-        comboLabelTitle2 = new App.Components.CustomLabel();
-        comboLabelTitle3 = new App.Components.CustomLabel();
+        healthLabelTitle = new App.Components.CustomLabel();
+        healthLabelText = new App.Components.CustomLabel();
         comboScorePanel = new javax.swing.JPanel();
         comboLabelTitle = new App.Components.CustomLabel();
         comboLabelScore = new App.Components.CustomLabel();
@@ -91,15 +135,22 @@ public class PlayPanel extends javax.swing.JPanel {
         comboLabelTitle1 = new App.Components.CustomLabel();
         totalScoreLabel = new App.Components.CustomLabel();
         binCapacityPanel = new javax.swing.JPanel();
+        bincapLabelTitle = new App.Components.CustomLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bincapLabelText = new App.Components.CustomLabel();
         powerupPanel = new javax.swing.JPanel();
         powerup1Panel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        powerUpOneTitle = new javax.swing.JLabel();
+        powerUpOneText = new javax.swing.JLabel();
         powerup2Panel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        powerUpTwoTitle = new javax.swing.JLabel();
+        powerUpTwoText = new javax.swing.JLabel();
         powerup3Panel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        powerUpThreeTitle = new javax.swing.JLabel();
+        powerUpThreeText = new javax.swing.JLabel();
         powerup4Panel = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        powerUpFourTitle = new javax.swing.JLabel();
+        powerUpFourText = new javax.swing.JLabel();
         binPanel = new javax.swing.JPanel();
         binIcon = new javax.swing.JLabel();
         mainGameplayPanel = new javax.swing.JPanel();
@@ -149,15 +200,15 @@ public class PlayPanel extends javax.swing.JPanel {
         hpPanel.setBackground(new java.awt.Color(199, 36, 44));
         hpPanel.setLayout(new java.awt.BorderLayout());
 
-        comboLabelTitle2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        comboLabelTitle2.setText("HP");
-        comboLabelTitle2.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        hpPanel.add(comboLabelTitle2, java.awt.BorderLayout.NORTH);
+        healthLabelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        healthLabelTitle.setText("HP");
+        healthLabelTitle.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        hpPanel.add(healthLabelTitle, java.awt.BorderLayout.NORTH);
 
-        comboLabelTitle3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        comboLabelTitle3.setText("100");
-        comboLabelTitle3.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        hpPanel.add(comboLabelTitle3, java.awt.BorderLayout.CENTER);
+        healthLabelText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        healthLabelText.setText("100");
+        healthLabelText.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        hpPanel.add(healthLabelText, java.awt.BorderLayout.CENTER);
 
         comboPanel.add(hpPanel);
 
@@ -170,7 +221,7 @@ public class PlayPanel extends javax.swing.JPanel {
 
         comboLabelScore.setBackground(new java.awt.Color(199, 36, 44));
         comboLabelScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        comboLabelScore.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        comboLabelScore.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         comboScorePanel.add(comboLabelScore, java.awt.BorderLayout.CENTER);
 
         comboPanel.add(comboScorePanel);
@@ -184,23 +235,28 @@ public class PlayPanel extends javax.swing.JPanel {
         totalScorePanel.add(comboLabelTitle1, java.awt.BorderLayout.NORTH);
 
         totalScoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        totalScoreLabel.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        totalScoreLabel.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         totalScorePanel.add(totalScoreLabel, java.awt.BorderLayout.CENTER);
 
         comboPanel.add(totalScorePanel);
 
         binCapacityPanel.setBackground(new java.awt.Color(199, 36, 44));
+        binCapacityPanel.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout binCapacityPanelLayout = new javax.swing.GroupLayout(binCapacityPanel);
-        binCapacityPanel.setLayout(binCapacityPanelLayout);
-        binCapacityPanelLayout.setHorizontalGroup(
-            binCapacityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
-        );
-        binCapacityPanelLayout.setVerticalGroup(
-            binCapacityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 70, Short.MAX_VALUE)
-        );
+        bincapLabelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        bincapLabelTitle.setText("CAPACITY");
+        bincapLabelTitle.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        binCapacityPanel.add(bincapLabelTitle, java.awt.BorderLayout.NORTH);
+
+        jPanel2.setBackground(new java.awt.Color(199, 36, 44));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        bincapLabelText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        bincapLabelText.setText("0/10");
+        bincapLabelText.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jPanel2.add(bincapLabelText, java.awt.BorderLayout.CENTER);
+
+        binCapacityPanel.add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
         comboPanel.add(binCapacityPanel);
 
@@ -210,38 +266,59 @@ public class PlayPanel extends javax.swing.JPanel {
         powerupPanel.setLayout(new java.awt.GridLayout(4, 1));
 
         powerup1Panel.setBackground(new java.awt.Color(199, 36, 44));
+        powerup1Panel.setLayout(new java.awt.BorderLayout());
 
-        jLabel2.setText("Fertilizer Boost");
-        powerup1Panel.add(jLabel2);
+        powerUpOneTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpOneTitle.setText("Fertilizer Boost");
+        powerup1Panel.add(powerUpOneTitle, java.awt.BorderLayout.NORTH);
+
+        powerUpOneText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpOneText.setText("0x");
+        powerup1Panel.add(powerUpOneText, java.awt.BorderLayout.CENTER);
 
         powerupPanel.add(powerup1Panel);
 
         powerup2Panel.setBackground(new java.awt.Color(199, 36, 44));
+        powerup2Panel.setLayout(new java.awt.BorderLayout());
 
-        jLabel3.setText("Material Shield");
-        powerup2Panel.add(jLabel3);
+        powerUpTwoTitle.setText("Material Shield");
+        powerup2Panel.add(powerUpTwoTitle, java.awt.BorderLayout.NORTH);
+
+        powerUpTwoText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpTwoText.setText("0x");
+        powerup2Panel.add(powerUpTwoText, java.awt.BorderLayout.CENTER);
 
         powerupPanel.add(powerup2Panel);
 
         powerup3Panel.setBackground(new java.awt.Color(199, 36, 44));
+        powerup3Panel.setLayout(new java.awt.BorderLayout());
 
-        jLabel4.setText("System Purge");
-        powerup3Panel.add(jLabel4);
+        powerUpThreeTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpThreeTitle.setText("System Purge");
+        powerup3Panel.add(powerUpThreeTitle, java.awt.BorderLayout.NORTH);
+
+        powerUpThreeText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpThreeText.setText("0x");
+        powerup3Panel.add(powerUpThreeText, java.awt.BorderLayout.CENTER);
 
         powerupPanel.add(powerup3Panel);
 
         powerup4Panel.setBackground(new java.awt.Color(199, 36, 44));
+        powerup4Panel.setLayout(new java.awt.BorderLayout());
 
-        jLabel5.setText("jLabel5");
-        powerup4Panel.add(jLabel5);
+        powerUpFourTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpFourTitle.setText("Incinerator");
+        powerup4Panel.add(powerUpFourTitle, java.awt.BorderLayout.NORTH);
+
+        powerUpFourText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        powerUpFourText.setText("0x");
+        powerup4Panel.add(powerUpFourText, java.awt.BorderLayout.CENTER);
 
         powerupPanel.add(powerup4Panel);
 
         gameplayPanel.add(powerupPanel, java.awt.BorderLayout.LINE_END);
 
         binPanel.setBackground(new java.awt.Color(199, 36, 44));
-
-        binIcon.setText("CHANGE BIN ICON HERE");
         binPanel.add(binIcon);
 
         gameplayPanel.add(binPanel, java.awt.BorderLayout.PAGE_END);
@@ -273,33 +350,56 @@ public class PlayPanel extends javax.swing.JPanel {
 
     // Stop timer/song if they are still running and go back to level select
     private void goBackBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackBtnActionPerformed
-        if (dt != null && dt.isRunning()) dt.stop();
-        if (songClip != null && songClip.isRunning()) {
-            songClip.stop();
-            songClip.close();
-        }
+        endGame(true);
         swapCard(masterPanel, "levelPanel");
     }//GEN-LAST:event_goBackBtnActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if (currentHealth <= 0) {
+            endGame(true);
+            javax.swing.JOptionPane.showMessageDialog(PlayPanel.this, "Game Over!");
+            swapCard(masterPanel, "levelPanel");
+            return;
+        }
+        
         int key = evt.getKeyCode();
         String pressedKey = "";
         switch (key) {
             case KeyEvent.VK_UP: 
-                binIcon.setText("Hazardous Bin");
+                binIcon.setIcon(binAssets[1]);
                 pressedKey = "U";
+                currentKey = 0;
                 break;
             case KeyEvent.VK_DOWN: 
-                binIcon.setText("Recyclable Bin");
+                binIcon.setIcon(binAssets[2]);
                 pressedKey = "D";
+                currentKey = 1;
                 break;
             case KeyEvent.VK_LEFT: 
-                binIcon.setText("Biodegradable Bin");
+                binIcon.setIcon(binAssets[0]);
                 pressedKey = "L";
+                currentKey = 2;
                 break;
             case KeyEvent.VK_RIGHT: 
-                binIcon.setText("Residual / General Waste Bin");
+                binIcon.setIcon(binAssets[3]);
                 pressedKey = "R";
+                currentKey = 3;
+                break;
+            case KeyEvent.VK_SPACE:
+                if (binCapacity[currentKey] >= MAX_BIN_CAPACITY) {
+                    binCapacity[currentKey] = 0;
+                    bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
+                    switch (currentKey) {
+                        case 0:
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                    }
+                }
                 break;
             default: return;
         }
@@ -312,25 +412,25 @@ public class PlayPanel extends javax.swing.JPanel {
                 long diff = currentSongTime - currentNote.timeMs;
                 
                 if (Math.abs(diff) < HIT_WINDOW) { // calculate difference between note hit and hit window
-                    if (currentNote.keys.contains(pressedKey)) {
+                    if (currentNote.keys.contains(pressedKey) && binCapacity[currentKey] <= MAX_BIN_CAPACITY) {
                         System.out.println("[HIT]: Correct bin was pressed -> " + Math.abs(diff));
+                        binCapacity[currentKey]++;
                         currentCombo++;
+                        bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
                         totalPoints = totalPoints + 300 + (300 * currentCombo);
                         totalScoreLabel.setText(Integer.toString(totalPoints));
                     } else {
                         System.out.println("[MISS]: Wrong Bin");
-                        currentCombo = 0;
-                        comboLabelTitle.setText("");
-                        comboLabelScore.setText("");
+                        resetCombo();
+                        loseHealth();
                     }
                     currentNoteIndex++;
                     updateConveyor();
                 } else if (diff < -HIT_WINDOW) { // early hit
                     System.out.println("[MISS] Too early");
                     currentNoteIndex++;
-                    currentCombo = 0;
-                    comboLabelTitle.setText("");
-                    comboLabelScore.setText("");
+                    resetCombo();
+                    loseHealth();
                     updateConveyor();
                 }
             }
@@ -346,26 +446,58 @@ public class PlayPanel extends javax.swing.JPanel {
         }
     }
     
+    private void endGame(boolean manualEndIt) {
+        if (manualEndIt) {
+            if (dt != null && dt.isRunning()) dt.stop();
+            
+            if (songClip != null && songClip.isRunning()) {
+                songClip.stop();
+                songClip.close();
+            }
+        }
+    }
+    
     private void swapCard(JComponent comp, String name) {
         CardLayout card = (CardLayout) comp.getLayout();
         card.show(comp, name);
     }
     
-    public void startGame(String levelName, String difficulty) {
-        checkDifficulty(difficulty);
-        SongLoader song = new SongLoader();
-        song.loadChart("src/Charts/" + levelName + ".sr");
-        notes = song.getNotes();
-        assignImagesToNotes(notes);
-        
+    private void loseHealth() {
+        int healthVal = Integer.parseInt(healthLabelText.getText());
+        currentHealth = healthVal - ( (int) (healthChangeModifier * (float) healthChangeFactor));
+        healthChangeModifier += 0.05f;
+        healthLabelText.setText(Integer.toString(currentHealth));
+    }
+    
+    private void resetCombo() {
+        currentCombo = 0;
+        comboLabelTitle.setText("");
+        comboLabelScore.setText("");
+    }
+    
+    private void resetLevelStats() {
+        currentHealth = 100;
+        healthChangeModifier = 0.1f;
+        healthLabelText.setText(Integer.toString(currentHealth));
         currentCombo = 0;
         currentNoteIndex = 0;
         totalPoints = 0;
-        
         comboLabelTitle.setText("");
         comboLabelScore.setText("");
         totalScoreLabel.setText("0");
         
+        // Randomize the bin icon start
+        binIcon.setIcon(binAssets[(int) (Math.random() * 4)]);
+    }
+    
+    public void startGame(String levelName, String difficulty) {
+        checkDifficulty(difficulty);
+        SongLoader song = new SongLoader();
+        song.loadChart("src/Charts/" + levelName + "/" + levelName + "_" + difficulty + ".sr");
+        notes = song.getNotes();
+        assignImagesToNotes(notes);
+        
+        resetLevelStats();
         updateConveyor();
         
         loadSong(levelName);
@@ -382,6 +514,13 @@ public class PlayPanel extends javax.swing.JPanel {
                 Note currentNote = notes.get(currentNoteIndex);
                 long timeToNote = currentNote.timeMs - currentSongTime;
 
+                if (currentHealth <= 0) {
+                    endGame(true);
+                    javax.swing.JOptionPane.showMessageDialog(PlayPanel.this, "Game Over!");
+                    swapCard(masterPanel, "levelPanel");
+                    return;
+                }
+                
                 // visual indicator for time to hit
                 if (Math.abs(timeToNote) <= HIT_WINDOW) {
                     currentPanel.setBackground(new java.awt.Color(50, 205, 50)); 
@@ -392,14 +531,18 @@ public class PlayPanel extends javax.swing.JPanel {
                 // Player missed
                 if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
                     System.out.println("[MISS]: Player missed");
-                    currentCombo = 0;
-                    comboLabelTitle.setText("");
-                    comboLabelScore.setText("");
+                    
+                    // Combo
+                    resetCombo();
+                    
+                    // Health
+                    loseHealth();
+                    
                     currentNoteIndex++;
                     currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
                     updateConveyor();
                 }
-            } else if (notes != null && currentNoteIndex >= notes.size()) {
+            } else if (notes != null && currentNoteIndex >= notes.size()) { //  No more notes to load
                 System.out.println("[Finish]: Level finished.");
                 dt.stop();
                 if (songClip != null) {
@@ -418,12 +561,26 @@ public class PlayPanel extends javax.swing.JPanel {
     
     private void loadSong(String levelName) {
         try {
+            System.out.println(levelName);
             File audioFile = new File("src/Songs/" + levelName + ".wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             songClip = AudioSystem.getClip();
             songClip.open(audioStream);
+            
+            if (options != null && songClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gainControl = (FloatControl) songClip.getControl(FloatControl.Type.MASTER_GAIN);
+                int volume = options.getVolume();
+                
+                if (volume == 0) {
+                    gainControl.setValue(gainControl.getMinimum());
+                } else {
+                    float dB = (float) (Math.log10(volume / 100.0) * 20.0);
+                    gainControl.setValue(dB);
+                }
+            }
         } catch (Exception e) {
             System.out.println("[Error]: Could not load song.");
+            e.printStackTrace();
         }
     }
     
@@ -478,28 +635,35 @@ public class PlayPanel extends javax.swing.JPanel {
     private javax.swing.JPanel binCapacityPanel;
     private javax.swing.JLabel binIcon;
     private javax.swing.JPanel binPanel;
+    private App.Components.CustomLabel bincapLabelText;
+    private App.Components.CustomLabel bincapLabelTitle;
     private App.Components.CustomLabel comboLabelScore;
     private App.Components.CustomLabel comboLabelTitle;
     private App.Components.CustomLabel comboLabelTitle1;
-    private App.Components.CustomLabel comboLabelTitle2;
-    private App.Components.CustomLabel comboLabelTitle3;
     private javax.swing.JPanel comboPanel;
     private javax.swing.JPanel comboScorePanel;
     private javax.swing.JPanel currentPanel;
     private javax.swing.JPanel gameplayPanel;
     private App.Components.CustomButton goBackBtn;
     private javax.swing.JPanel goBackPanel;
+    private App.Components.CustomLabel healthLabelText;
+    private App.Components.CustomLabel healthLabelTitle;
     private javax.swing.JPanel hitboxPanel;
     private javax.swing.JPanel hpPanel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel mainGameplayPanel;
+    private javax.swing.JLabel powerUpFourText;
+    private javax.swing.JLabel powerUpFourTitle;
+    private javax.swing.JLabel powerUpOneText;
+    private javax.swing.JLabel powerUpOneTitle;
+    private javax.swing.JLabel powerUpThreeText;
+    private javax.swing.JLabel powerUpThreeTitle;
+    private javax.swing.JLabel powerUpTwoText;
+    private javax.swing.JLabel powerUpTwoTitle;
     private javax.swing.JPanel powerup1Panel;
     private javax.swing.JPanel powerup2Panel;
     private javax.swing.JPanel powerup3Panel;

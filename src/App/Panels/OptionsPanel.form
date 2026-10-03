@@ -70,28 +70,24 @@
             </Component>
             <Component class="App.Components.CustomSlider" name="musicSlider">
             </Component>
-            <Component class="App.Components.CustomLabel" name="sfxText">
+            <Container class="javax.swing.JPanel" name="jPanel1">
               <Properties>
-                <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="SFX Volume"/>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="SansSerif" size="18" style="1"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="2c" green="24" red="c7" type="rgb"/>
                 </Property>
               </Properties>
-            </Component>
-            <Component class="App.Components.CustomSlider" name="sfxSlider">
-            </Component>
-            <Component class="App.Components.CustomLabel" name="offsetText">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel2">
               <Properties>
-                <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Offset"/>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="SansSerif" size="18" style="1"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="2c" green="24" red="c7" type="rgb"/>
                 </Property>
               </Properties>
-            </Component>
-            <Component class="App.Components.CustomSlider" name="offsetSlider">
-            </Component>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+            </Container>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="visualPanel">

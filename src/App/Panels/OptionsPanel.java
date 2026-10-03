@@ -43,6 +43,7 @@ public class OptionsPanel extends javax.swing.JPanel {
     
     public void setOptions(Options options) {
         this.options = options;
+        musicSlider.setValue(options.getVolume());
     }
     
     /**
@@ -58,10 +59,8 @@ public class OptionsPanel extends javax.swing.JPanel {
         audioPanel = new javax.swing.JPanel();
         musicText = new App.Components.CustomLabel();
         musicSlider = new App.Components.CustomSlider();
-        sfxText = new App.Components.CustomLabel();
-        sfxSlider = new App.Components.CustomSlider();
-        offsetText = new App.Components.CustomLabel();
-        offsetSlider = new App.Components.CustomSlider();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         visualPanel = new javax.swing.JPanel();
         resolutionText = new App.Components.CustomLabel();
         resolutionPanel = new javax.swing.JPanel();
@@ -91,17 +90,11 @@ public class OptionsPanel extends javax.swing.JPanel {
         audioPanel.add(musicText);
         audioPanel.add(musicSlider);
 
-        sfxText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        sfxText.setText("SFX Volume");
-        sfxText.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        audioPanel.add(sfxText);
-        audioPanel.add(sfxSlider);
+        jPanel1.setBackground(new java.awt.Color(199, 36, 44));
+        audioPanel.add(jPanel1);
 
-        offsetText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        offsetText.setText("Offset");
-        offsetText.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        audioPanel.add(offsetText);
-        audioPanel.add(offsetSlider);
+        jPanel2.setBackground(new java.awt.Color(199, 36, 44));
+        audioPanel.add(jPanel2);
 
         settingsPanel.addTab("AUDIO", audioPanel);
 
@@ -178,7 +171,8 @@ public class OptionsPanel extends javax.swing.JPanel {
             options.changeTheme(themeDropdown);
             options.changeResolution(resolutionDropdown);
             options.changeFont(fontDropdown);
- 
+            options.changeVolume(musicSlider.getValue());
+            
             this.swapCard(masterPanel, "mainMenu");
             System.out.println("[Changed-Panel]: Options -> Main Menu");
         }
@@ -196,17 +190,15 @@ public class OptionsPanel extends javax.swing.JPanel {
     private App.Components.CustomDropdown fontDropdown;
     private javax.swing.JPanel fontPanel;
     private App.Components.CustomLabel fontText;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private App.Components.CustomSlider musicSlider;
     private App.Components.CustomLabel musicText;
-    private App.Components.CustomSlider offsetSlider;
-    private App.Components.CustomLabel offsetText;
     private App.Components.CustomDropdown resolutionDropdown;
     private javax.swing.JPanel resolutionPanel;
     private App.Components.CustomLabel resolutionText;
     private App.Components.CustomButton saveBtn;
     private javax.swing.JTabbedPane settingsPanel;
-    private App.Components.CustomSlider sfxSlider;
-    private App.Components.CustomLabel sfxText;
     private App.Components.CustomDropdown themeDropdown;
     private javax.swing.JPanel themePanel;
     private App.Components.CustomLabel themeText;
