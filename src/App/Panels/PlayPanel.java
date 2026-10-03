@@ -367,9 +367,11 @@ public class PlayPanel extends javax.swing.JPanel {
         hitboxPanel.add(currentPanel);
 
         textInfoPanel.setBackground(new java.awt.Color(199, 36, 44));
-        textInfoPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51)));
         textInfoPanel.setLayout(new java.awt.BorderLayout());
-        textInfoPanel.add(textInfoLabel, java.awt.BorderLayout.CENTER);
+
+        textInfoLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        textInfoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        textInfoPanel.add(textInfoLabel, java.awt.BorderLayout.NORTH);
 
         hitboxPanel.add(textInfoPanel);
 
