@@ -31,10 +31,12 @@ public class PlayPanel extends javax.swing.JPanel {
     private int fertilizerCount = 0;
     private boolean matShieldIsActive;
     private int matShieldCount = 0;
+    private int activeShieldCharges = 0;
     private boolean shouldPurge;
     private int purgeCount = 0;
     private boolean shouldIncinerate;
     private int incinerateCount = 0;
+    private long incineratorEndTime = 0;
     
     private final int MAX_BIN_CAPACITY = 10;
     private int[] binCapacity = {0,0,0,0};
@@ -365,6 +367,7 @@ public class PlayPanel extends javax.swing.JPanel {
         int key = evt.getKeyCode();
         String pressedKey = "";
         switch (key) {
+            // Gameplay Keys
             case KeyEvent.VK_UP: 
                 binIcon.setIcon(binAssets[1]);
                 pressedKey = "U";
@@ -385,18 +388,74 @@ public class PlayPanel extends javax.swing.JPanel {
                 pressedKey = "R";
                 currentKey = 3;
                 break;
+            // Power Ups Use
+            case KeyEvent.VK_Q:
+                if (fertilizerCount > 0) {
+                    fertilizerCount--;
+                    powerUpOneText.setText(fertilizerCount + "x");
+                    currentHealth = Math.min(100, currentHealth + 30); // Restores a chunk of HP
+                    healthLabelText.setText(Integer.toString(currentHealth));
+                    System.out.println("[POWERUP]: Fertilizer Boost used!");
+                }
+                break;
+            case KeyEvent.VK_W:
+                if (matShieldCount > 0) {
+                    matShieldCount--;
+                    powerUpTwoText.setText(matShieldCount + "x");
+                    activeShieldCharges += 2; // Grants 2 Shield Charges
+                    matShieldIsActive = true;
+                    System.out.println("[POWERUP]: Material Shield active!");
+                }
+                break;
+            case KeyEvent.VK_E:
+                if (purgeCount > 0) {
+                    purgeCount--;
+                    powerUpThreeText.setText(purgeCount + "x");
+                    
+                    // Instantly clears the next 3 upcoming notes for max points
+                    int notesToClear = Math.min(3, notes != null ? notes.size() - currentNoteIndex : 0);
+                    for(int i = 0; i < notesToClear; i++) {
+                        currentCombo++;
+                        int pts = 300 + (300 * currentCombo);
+                        totalPoints += (shouldIncinerate ? pts * 2 : pts);
+                        currentNoteIndex++;
+                    }
+                    totalScoreLabel.setText(Integer.toString(totalPoints));
+                    updateConveyor();
+                    System.out.println("[POWERUP]: System Purge used!");
+                }
+                break;
+            case KeyEvent.VK_R:
+                if (incinerateCount > 0) {
+                    incinerateCount--;
+                    powerUpFourText.setText(incinerateCount + "x");
+                    shouldIncinerate = true;
+                    incineratorEndTime = System.currentTimeMillis() + 10000; // 10 seconds
+                    System.out.println("[POWERUP]: Incinerator active for 10s!");
+                }
+                break; 
+                
+            // Empty Bin
             case KeyEvent.VK_SPACE:
                 if (binCapacity[currentKey] >= MAX_BIN_CAPACITY) {
                     binCapacity[currentKey] = 0;
                     bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
                     switch (currentKey) {
                         case 0:
+                            purgeCount++;
+                            powerUpThreeText.setText(Integer.toString(purgeCount) + "x");
                             break;
                         case 1:
+                            matShieldCount++;
+                            powerUpTwoText.setText(Integer.toString(matShieldCount) + "x");
                             break;
                         case 2:
+                            fertilizerCount++;
+                            powerUpOneText.setText(Integer.toString(fertilizerCount) + "x");
                             break;
                         case 3:
+                            incinerateCount++;
+                            powerUpFourText.setText(Integer.toString(incinerateCount) + "x");
                             break;
                     }
                 }
@@ -417,20 +476,35 @@ public class PlayPanel extends javax.swing.JPanel {
                         binCapacity[currentKey]++;
                         currentCombo++;
                         bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
-                        totalPoints = totalPoints + 300 + (300 * currentCombo);
+                        
+                        int multiplier = shouldIncinerate ? 2 : 1; // if powerup is active
+                        totalPoints = totalPoints + ((300 + (300 * currentCombo)) * multiplier);
                         totalScoreLabel.setText(Integer.toString(totalPoints));
                     } else {
-                        System.out.println("[MISS]: Wrong Bin");
-                        resetCombo();
-                        loseHealth();
+                        if (matShieldIsActive && activeShieldCharges > 0) {
+                            activeShieldCharges--;
+                            System.out.println("[SHIELD]: Mistake absorbed");
+                            if (activeShieldCharges == 0) matShieldIsActive = false;
+                        } else {
+                            System.out.println("[MISS]: Wrong Bin");
+                            resetCombo();
+                            loseHealth();
+                        }
                     }
                     currentNoteIndex++;
                     updateConveyor();
                 } else if (diff < -HIT_WINDOW) { // early hit
                     System.out.println("[MISS] Too early");
                     currentNoteIndex++;
-                    resetCombo();
-                    loseHealth();
+                    if (matShieldIsActive && activeShieldCharges > 0) {
+                        activeShieldCharges--;
+                        System.out.println("[SHIELD]: Mistake absorbed! Charges left: " + activeShieldCharges);
+                        if (activeShieldCharges == 0) matShieldIsActive = false;
+                    } else {
+                        System.out.println("[MISS]: Wrong Bin / Missed timing");
+                        resetCombo();
+                        loseHealth();
+                    }
                     updateConveyor();
                 }
             }
@@ -504,6 +578,11 @@ public class PlayPanel extends javax.swing.JPanel {
         startTime = System.currentTimeMillis();
         songClip.start();
         dt = new Timer(16, (ActionEvent e) -> {
+            if (shouldIncinerate && System.currentTimeMillis() > incineratorEndTime) {
+                shouldIncinerate = false;
+                System.out.println("[POWERUP]: Incinerator ended.");
+            }
+            
             if (currentCombo > 0) {
                 comboLabelTitle.setText("COMBO");
                 comboLabelScore.setText("x"+ Integer.toString(currentCombo));
@@ -532,11 +611,13 @@ public class PlayPanel extends javax.swing.JPanel {
                 if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
                     System.out.println("[MISS]: Player missed");
                     
-                    // Combo
-                    resetCombo();
-                    
-                    // Health
-                    loseHealth();
+                    if (matShieldIsActive && activeShieldCharges > 0) {
+                        activeShieldCharges--;
+                        if (activeShieldCharges == 0) matShieldIsActive = false;
+                    } else {
+                        resetCombo();
+                        loseHealth();
+                    }
                     
                     currentNoteIndex++;
                     currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
