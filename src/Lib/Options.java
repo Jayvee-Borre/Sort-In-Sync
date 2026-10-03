@@ -73,6 +73,10 @@ public class Options {
         return currentVolume;
     }
     
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
+    
     public void changeTheme(JComboBox item) {
         String label = (String) item.getSelectedItem();
         if (label == null) return;
