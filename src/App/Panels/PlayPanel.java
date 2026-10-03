@@ -41,6 +41,9 @@ public class PlayPanel extends javax.swing.JPanel {
     private final int MAX_BIN_CAPACITY = 10;
     private int[] binCapacity = {0,0,0,0};
     private int currentKey = 0; // this should represent UDLR
+    private int spaceHitTimes;
+    private int spaceHitCount = 0;
+    private long pauseStartTime = 0;
     
     // Health
     private int currentHealth = 100;
@@ -50,10 +53,12 @@ public class PlayPanel extends javax.swing.JPanel {
     // Points
     private int totalPoints = 0;
     private int currentCombo = 0;
+    private int maxCombo = 0;
     
     // Timer and Notes
     private Options options;
     private Timer dt;
+    private Timer infoTimer;
     private long startTime;
     private List<Note> notes;
     private int currentNoteIndex = 0;
@@ -90,6 +95,22 @@ public class PlayPanel extends javax.swing.JPanel {
         new ImageIcon(getClass().getResource("/Assets/bins/recyclable_bin.png")),
         new ImageIcon(getClass().getResource("/Assets/bins/residual_bin.png"))
     };
+    private Services.Database database;
+    private String currentLevelName; // Remembers what level is being played
+
+    public void setDatabase(Services.Database database) {
+        this.database = database;
+    }
+    
+    private void saveScore() {
+        if (database != null && options != null && options.getCurrentUserId() != Options.GUEST) {
+            int songId = database.getSongIdByName(currentLevelName);
+            if (songId != -1) {
+                database.recordScore(options.getCurrentUserId(), songId, totalPoints, maxCombo);
+                System.out.println("[DB]: Score saved successfully.");
+            }
+        }
+    }
     
     public PlayPanel() {
         initComponents();
@@ -161,6 +182,8 @@ public class PlayPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         currentPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        textInfoPanel = new javax.swing.JPanel();
+        textInfoLabel = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -328,7 +351,7 @@ public class PlayPanel extends javax.swing.JPanel {
         mainGameplayPanel.setBackground(new java.awt.Color(199, 36, 44));
 
         hitboxPanel.setBackground(new java.awt.Color(199, 36, 44));
-        hitboxPanel.setLayout(new java.awt.GridLayout(2, 1));
+        hitboxPanel.setLayout(new java.awt.GridLayout(3, 1));
 
         upcomingPanel.setBackground(new java.awt.Color(199, 36, 44));
         upcomingPanel.setLayout(new java.awt.BorderLayout());
@@ -342,6 +365,13 @@ public class PlayPanel extends javax.swing.JPanel {
         currentPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
 
         hitboxPanel.add(currentPanel);
+
+        textInfoPanel.setBackground(new java.awt.Color(199, 36, 44));
+        textInfoPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51)));
+        textInfoPanel.setLayout(new java.awt.BorderLayout());
+        textInfoPanel.add(textInfoLabel, java.awt.BorderLayout.CENTER);
+
+        hitboxPanel.add(textInfoPanel);
 
         mainGameplayPanel.add(hitboxPanel);
 
@@ -365,6 +395,20 @@ public class PlayPanel extends javax.swing.JPanel {
         }
         
         int key = evt.getKeyCode();
+        if (dt != null && !dt.isRunning()) {
+            if (key == KeyEvent.VK_SPACE) {
+                if (spaceHitCount + 1 >= spaceHitTimes) {
+                    emptyTheBin();
+                    spaceHitCount = 0;
+                } else {
+                    spaceHitCount++;
+                    textInfoLabel.setText("BIN FULL! MASH SPACEBAR " + (spaceHitTimes - spaceHitCount) + " TIMES!");
+                }
+            }
+            return;
+        }
+        
+        
         String pressedKey = "";
         switch (key) {
             // Gameplay Keys
@@ -396,6 +440,7 @@ public class PlayPanel extends javax.swing.JPanel {
                     currentHealth = Math.min(100, currentHealth + 30); // Restores a chunk of HP
                     healthLabelText.setText(Integer.toString(currentHealth));
                     System.out.println("[POWERUP]: Fertilizer Boost used!");
+                    showInfoText("Fertilizer Used: +30 HP");
                 }
                 break;
             case KeyEvent.VK_W:
@@ -405,6 +450,7 @@ public class PlayPanel extends javax.swing.JPanel {
                     activeShieldCharges += 2; // Grants 2 Shield Charges
                     matShieldIsActive = true;
                     System.out.println("[POWERUP]: Material Shield active!");
+                    showInfoText("Shield Active: 2 Charges");
                 }
                 break;
             case KeyEvent.VK_E:
@@ -416,6 +462,9 @@ public class PlayPanel extends javax.swing.JPanel {
                     int notesToClear = Math.min(3, notes != null ? notes.size() - currentNoteIndex : 0);
                     for(int i = 0; i < notesToClear; i++) {
                         currentCombo++;
+                        if (currentCombo > maxCombo) {
+                            maxCombo = currentCombo;
+                        }
                         int pts = 300 + (300 * currentCombo);
                         totalPoints += (shouldIncinerate ? pts * 2 : pts);
                         currentNoteIndex++;
@@ -423,6 +472,7 @@ public class PlayPanel extends javax.swing.JPanel {
                     totalScoreLabel.setText(Integer.toString(totalPoints));
                     updateConveyor();
                     System.out.println("[POWERUP]: System Purge used!");
+                    showInfoText("System Purged: Upcoming notes cleared");
                 }
                 break;
             case KeyEvent.VK_R:
@@ -431,35 +481,10 @@ public class PlayPanel extends javax.swing.JPanel {
                     powerUpFourText.setText(incinerateCount + "x");
                     shouldIncinerate = true;
                     incineratorEndTime = System.currentTimeMillis() + 10000; // 10 seconds
-                    System.out.println("[POWERUP]: Incinerator active for 10s!");
+                    System.out.println("[POWERUP]: Incinerator active for 10s");
+                    showInfoText("Incinerator Active: 2x Points for 10s");
                 }
                 break; 
-                
-            // Empty Bin
-            case KeyEvent.VK_SPACE:
-                if (binCapacity[currentKey] >= MAX_BIN_CAPACITY) {
-                    binCapacity[currentKey] = 0;
-                    bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
-                    switch (currentKey) {
-                        case 0:
-                            purgeCount++;
-                            powerUpThreeText.setText(Integer.toString(purgeCount) + "x");
-                            break;
-                        case 1:
-                            matShieldCount++;
-                            powerUpTwoText.setText(Integer.toString(matShieldCount) + "x");
-                            break;
-                        case 2:
-                            fertilizerCount++;
-                            powerUpOneText.setText(Integer.toString(fertilizerCount) + "x");
-                            break;
-                        case 3:
-                            incinerateCount++;
-                            powerUpFourText.setText(Integer.toString(incinerateCount) + "x");
-                            break;
-                    }
-                }
-                break;
             default: return;
         }
         
@@ -475,6 +500,9 @@ public class PlayPanel extends javax.swing.JPanel {
                         System.out.println("[HIT]: Correct bin was pressed -> " + Math.abs(diff));
                         binCapacity[currentKey]++;
                         currentCombo++;
+                        if (currentCombo > maxCombo) {
+                            maxCombo = currentCombo;
+                        }
                         bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
                         
                         int multiplier = shouldIncinerate ? 2 : 1; // if powerup is active
@@ -484,9 +512,11 @@ public class PlayPanel extends javax.swing.JPanel {
                         if (matShieldIsActive && activeShieldCharges > 0) {
                             activeShieldCharges--;
                             System.out.println("[SHIELD]: Mistake absorbed");
+                            showInfoText("Shield Absorbed Mistake! (" + activeShieldCharges + " left)");
                             if (activeShieldCharges == 0) matShieldIsActive = false;
                         } else {
                             System.out.println("[MISS]: Wrong Bin");
+                            showInfoText("Miss: Wrong Bin");
                             resetCombo();
                             loseHealth();
                         }
@@ -499,9 +529,11 @@ public class PlayPanel extends javax.swing.JPanel {
                     if (matShieldIsActive && activeShieldCharges > 0) {
                         activeShieldCharges--;
                         System.out.println("[SHIELD]: Mistake absorbed! Charges left: " + activeShieldCharges);
+                        showInfoText("Shield Absorbed Mistake (" + activeShieldCharges + " left)");
                         if (activeShieldCharges == 0) matShieldIsActive = false;
                     } else {
                         System.out.println("[MISS]: Wrong Bin / Missed timing");
+                        showInfoText("Miss: Wrong Bin");
                         resetCombo();
                         loseHealth();
                     }
@@ -511,6 +543,59 @@ public class PlayPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_formKeyPressed
 
+    private void emptyTheBin() {
+        binCapacity[currentKey] = 0;
+        bincapLabelText.setText(Integer.toString(binCapacity[currentKey]) + "/" + Integer.toString(MAX_BIN_CAPACITY));
+        switch (currentKey) {
+            case 0:
+                purgeCount++;
+                powerUpThreeText.setText(Integer.toString(purgeCount) + "x");
+                break;
+            case 1:
+                matShieldCount++;
+                powerUpTwoText.setText(Integer.toString(matShieldCount) + "x");
+                break;
+            case 2:
+                fertilizerCount++;
+                powerUpOneText.setText(Integer.toString(fertilizerCount) + "x");
+                break;
+            case 3:
+                incinerateCount++;
+                powerUpFourText.setText(Integer.toString(incinerateCount) + "x");
+                break;
+        }
+        
+        long pauseDuration = System.currentTimeMillis() - pauseStartTime;
+        startTime += pauseDuration;
+        
+        textInfoLabel.setText("");
+        songClip.start();
+        dt.start();
+    }
+    
+    private void showInfoText(String message) {
+        // Do not overwrite the text if the minigame is currently paused
+        if (dt != null && !dt.isRunning()) {
+            return; 
+        }
+        
+        textInfoLabel.setText(message);
+        
+        // If a previous message timer is still running restart it
+        if (infoTimer != null && infoTimer.isRunning()) {
+            infoTimer.stop();
+        }
+        
+        infoTimer = new Timer(1500, (ActionEvent e) -> {
+            // Only clear the text if the game isnt paused
+            if (dt != null && dt.isRunning()) {
+                textInfoLabel.setText("");
+            }
+        });
+        infoTimer.setRepeats(false); // Only run once
+        infoTimer.start();
+    }
+    
     private void checkDifficulty(String difficulty) {
         System.out.println("[Check]: Current difficulty: " + difficulty);
         switch (difficulty) {
@@ -554,17 +639,43 @@ public class PlayPanel extends javax.swing.JPanel {
         healthChangeModifier = 0.1f;
         healthLabelText.setText(Integer.toString(currentHealth));
         currentCombo = 0;
+        maxCombo = 0;
         currentNoteIndex = 0;
         totalPoints = 0;
+        spaceHitCount = 0;
         comboLabelTitle.setText("");
         comboLabelScore.setText("");
         totalScoreLabel.setText("0");
+        
+        fertilizerCount = 0;
+        matShieldCount = 0;
+        activeShieldCharges = 0;
+        purgeCount = 0;
+        incinerateCount = 0;
+        
+        fertilizerIsActive = false;
+        matShieldIsActive = false;
+        shouldPurge = false;
+        shouldIncinerate = false;
+        
+        // Reset UI text for Power-Ups
+        powerUpOneText.setText("0x");
+        powerUpTwoText.setText("0x");
+        powerUpThreeText.setText("0x");
+        powerUpFourText.setText("0x");
+        
+        // Reset Bin Capacities
+        for (int i = 0; i < binCapacity.length; i++) {
+            binCapacity[i] = 0;
+        }
+        bincapLabelText.setText("0/" + MAX_BIN_CAPACITY);
         
         // Randomize the bin icon start
         binIcon.setIcon(binAssets[(int) (Math.random() * 4)]);
     }
     
     public void startGame(String levelName, String difficulty) {
+        currentLevelName = levelName;
         checkDifficulty(difficulty);
         SongLoader song = new SongLoader();
         song.loadChart("src/Charts/" + levelName + "/" + levelName + "_" + difficulty + ".sr");
@@ -578,62 +689,78 @@ public class PlayPanel extends javax.swing.JPanel {
         startTime = System.currentTimeMillis();
         songClip.start();
         dt = new Timer(16, (ActionEvent e) -> {
-            if (shouldIncinerate && System.currentTimeMillis() > incineratorEndTime) {
-                shouldIncinerate = false;
-                System.out.println("[POWERUP]: Incinerator ended.");
-            }
-            
-            if (currentCombo > 0) {
-                comboLabelTitle.setText("COMBO");
-                comboLabelScore.setText("x"+ Integer.toString(currentCombo));
-            }
-            long currentSongTime = System.currentTimeMillis() - startTime;
-            
-            if (notes != null && currentNoteIndex < notes.size()) {
-                Note currentNote = notes.get(currentNoteIndex);
-                long timeToNote = currentNote.timeMs - currentSongTime;
-
-                if (currentHealth <= 0) {
-                    endGame(true);
-                    javax.swing.JOptionPane.showMessageDialog(PlayPanel.this, "Game Over!");
-                    swapCard(masterPanel, "levelPanel");
-                    return;
-                }
-                
-                // visual indicator for time to hit
-                if (Math.abs(timeToNote) <= HIT_WINDOW) {
-                    currentPanel.setBackground(new java.awt.Color(50, 205, 50)); 
-                } else {
-                    currentPanel.setBackground(new java.awt.Color(199, 36, 44)); 
-                }
-                
-                // Player missed
-                if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
-                    System.out.println("[MISS]: Player missed");
-                    
-                    if (matShieldIsActive && activeShieldCharges > 0) {
-                        activeShieldCharges--;
-                        if (activeShieldCharges == 0) matShieldIsActive = false;
-                    } else {
-                        resetCombo();
-                        loseHealth();
-                    }
-                    
-                    currentNoteIndex++;
-                    currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
-                    updateConveyor();
-                }
-            } else if (notes != null && currentNoteIndex >= notes.size()) { //  No more notes to load
-                System.out.println("[Finish]: Level finished.");
+            if (binCapacity[currentKey] >= MAX_BIN_CAPACITY) {
+                // Stop music
+                songClip.stop();
                 dt.stop();
-                if (songClip != null) {
-                    songClip.stop();
-                    songClip.close();
-                }
                 
-                javax.swing.JOptionPane.showMessageDialog(this, "Level Complete!\nFinal Score: " + totalPoints);
-            
-                swapCard(masterPanel, "levelPanel"); 
+                // Randomize Spacebar hit
+                pauseStartTime = System.currentTimeMillis();
+                spaceHitTimes = (int) (Math.random() * 4) + 2;
+                
+                // Info text
+                textInfoLabel.setText("BIN FULL MASH SPACEBAR " + spaceHitTimes + " TIMES!");
+            } else {
+                if (shouldIncinerate && System.currentTimeMillis() > incineratorEndTime) {
+                    shouldIncinerate = false;
+                    showInfoText("Incinerator Ended.");
+                    System.out.println("[POWERUP]: Incinerator ended.");
+                }
+
+                if (currentCombo > 0) {
+                    comboLabelTitle.setText("COMBO");
+                    comboLabelScore.setText("x"+ Integer.toString(currentCombo));
+                }
+                long currentSongTime = System.currentTimeMillis() - startTime;
+
+                if (notes != null && currentNoteIndex < notes.size()) {
+                    Note currentNote = notes.get(currentNoteIndex);
+                    long timeToNote = currentNote.timeMs - currentSongTime;
+
+                    if (currentHealth <= 0) {
+                        endGame(true);
+                        javax.swing.JOptionPane.showMessageDialog(PlayPanel.this, "Game Over!");
+                        swapCard(masterPanel, "levelPanel");
+                        return;
+                    }
+
+                    // visual indicator for time to hit
+                    if (Math.abs(timeToNote) <= HIT_WINDOW) {
+                        currentPanel.setBackground(new java.awt.Color(50, 205, 50)); 
+                    } else {
+                        currentPanel.setBackground(new java.awt.Color(199, 36, 44)); 
+                    }
+
+                    // Player missed
+                    if (currentSongTime > currentNote.timeMs + HIT_WINDOW) {
+                        if (matShieldIsActive && activeShieldCharges > 0) {
+                            activeShieldCharges--;
+                            showInfoText("Shield Absorbed Mistake! (" + activeShieldCharges + " left)");
+                            if (activeShieldCharges == 0) matShieldIsActive = false;
+                        } else {
+                            System.out.println("[MISS]: Player missed");
+                            showInfoText("Miss: Note Dropped!");
+                            resetCombo();
+                            loseHealth();
+                        }
+
+                        currentNoteIndex++;
+                        currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
+                        updateConveyor();
+                    }
+                } else if (notes != null && currentNoteIndex >= notes.size()) { //  No more notes to load
+                    System.out.println("[Finish]: Level finished.");
+                    dt.stop();
+                    if (songClip != null) {
+                        songClip.stop();
+                        songClip.close();
+                    }
+
+                    saveScore();
+                    javax.swing.JOptionPane.showMessageDialog(this, "Level Complete!\nFinal Score: " + totalPoints);
+
+                    swapCard(masterPanel, "levelPanel"); 
+                }
             }
         });
         
@@ -750,6 +877,8 @@ public class PlayPanel extends javax.swing.JPanel {
     private javax.swing.JPanel powerup3Panel;
     private javax.swing.JPanel powerup4Panel;
     private javax.swing.JPanel powerupPanel;
+    private javax.swing.JLabel textInfoLabel;
+    private javax.swing.JPanel textInfoPanel;
     private App.Components.CustomLabel totalScoreLabel;
     private javax.swing.JPanel totalScorePanel;
     private javax.swing.JPanel upcomingPanel;

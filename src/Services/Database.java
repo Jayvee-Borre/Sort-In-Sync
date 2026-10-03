@@ -40,6 +40,20 @@ public class Database {
         }
         return conn;
     }
+    
+    public int getSongIdByName(String title) {
+        String sql = "SELECT SongID FROM Song WHERE Title = ?";
+        try (Connection conn = connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, title);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("SongID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
     private void createTables() {
         String[] ddl = {
@@ -74,6 +88,7 @@ public class Database {
                 "SongID INTEGER NOT NULL," +
                 "UserID INTEGER NOT NULL," +
                 "Score INTEGER NOT NULL," +
+                "MaxCombo INTEGER NOT NULL DEFAULT 0," +
                 "FOREIGN KEY (SongID) REFERENCES Song(SongID) ON DELETE CASCADE," +
                 "FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE)"
         };
@@ -265,13 +280,14 @@ public class Database {
     // Leaderboard
     // ------------------------------------------------------------------
     
-    public boolean recordScore(int userId, int songId, int score) {
-        String sql = "INSERT INTO Leaderboard (SongID, UserID, Score) VALUES (?, ?, ?)";
+    public boolean recordScore(int userId, int songId, int score, int maxCombo) {
+        String sql = "INSERT INTO Leaderboard (SongID, UserID, Score, MaxCombo) VALUES (?, ?, ?, ?)";
         try (Connection conn = connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, songId);
             ps.setInt(2, userId);
             ps.setInt(3, score);
+            ps.setInt(4, maxCombo); // <-- ADDED
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -282,7 +298,7 @@ public class Database {
     
     public List<LeaderboardEntry> getLeaderboardForSong(int songId) {
         List<LeaderboardEntry> entries = new ArrayList<>();
-        String sql = "SELECT u.Username, l.Score FROM Leaderboard l " +
+        String sql = "SELECT u.Username, l.Score, l.MaxCombo FROM Leaderboard l " + // <-- ADDED l.MaxCombo
                      "JOIN User u ON l.UserID = u.UserID " +
                      "WHERE l.SongID = ? ORDER BY l.Score DESC";
         try (Connection conn = connect();
@@ -290,7 +306,7 @@ public class Database {
             ps.setInt(1, songId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    entries.add(new LeaderboardEntry(rs.getString("Username"), rs.getInt("Score")));
+                    entries.add(new LeaderboardEntry(rs.getString("Username"), rs.getInt("Score"), rs.getInt("MaxCombo"))); // <-- ADDED MaxCombo
                 }
             }
         } catch (SQLException e) {
@@ -321,7 +337,7 @@ public class Database {
 
         System.out.println("Seeding dummy data...");
 
-        // 3 users (plaintext passwords, matches current registerUser/validateLogin scheme)
+        // 3 users (plaintext passwords)
         registerUser("eco_ace", "leaf123");
         registerUser("recycle_rio", "binit456");
         registerUser("guest", "guestpass");
@@ -330,24 +346,27 @@ public class Database {
         int u2 = getUserId("recycle_rio");
         int u3 = getUserId("guest");
 
-        // 3 distinct settings profiles, using values Options.java actually accepts
+        // 3 distinct settings profiles
         saveUserOptions(u1, "1280x720", "Dark", "SansSerif", 70);
         saveUserOptions(u2, "1024x768", "Light", "SansSerif", 50);
         saveUserOptions(u3, "800x600", "Light", "Monospaced", 40);
 
-        // Real song: matches Charts/Canon.sr + Songs/Canon.mp3 exactly
-        int canonId = insertSong("Canon", 126, "Songs/Canon.mp3", "Charts/Canon.sr");
+        // Insert ALL 5 game levels. The Title MUST exactly match the LevelSelect labels
+        int canonId = insertSong("Canon", 126, "Songs/Canon.wav", "Charts/Canon/");
+        int cancanId = insertSong("CanCan", 140, "Songs/CanCan.wav", "Charts/CanCan/");
+        int twotigersId = insertSong("TwoTigers", 110, "Songs/TwoTigers.wav", "Charts/TwoTigers/");
+        int springId = insertSong("Spring", 120, "Songs/Spring.wav", "Charts/Spring/");
+        int beyerId = insertSong("BeyerNo8", 100, "Songs/BeyerNo8.wav", "Charts/BeyerNo8/");
 
-        // NOTE: placeholder second song — WasteWarrior.mp3/.sr do NOT exist yet.
-        // Remove or replace once a real second chart is added; don't let the
-        // game try to load this one until then.
-        int placeholderId = insertSong("Waste Warrior", 140, "Songs/WasteWarrior.mp3", "Charts/WasteWarrior.sr");
-
-        // A few leaderboard rows, mostly on the real song
-        recordScore(u1, canonId, 9850);
-        recordScore(u2, canonId, 8700);
-        recordScore(u3, canonId, 6400);
-        recordScore(u1, placeholderId, 5000);
+        // Seed a few dummy scores for testing
+        recordScore(u1, canonId, 9850, 30);
+        recordScore(u2, canonId, 8700, 40);
+        recordScore(u3, canonId, 6400, 82);
+        
+        recordScore(u1, cancanId, 12500, 26);
+        recordScore(u2, twotigersId, 8000, 42);
+        recordScore(u1, springId, 15000, 12);
+        recordScore(u3, beyerId, 4200, 12);
 
         System.out.println("Dummy data seeded.");
     }
@@ -391,10 +410,12 @@ public class Database {
     public static class LeaderboardEntry {
         public final String username;
         public final int score;
+        public final int maxCombo;
 
-        public LeaderboardEntry(String username, int score) {
+        public LeaderboardEntry(String username, int score, int maxCombo) {
             this.username = username;
             this.score = score;
+            this.maxCombo = maxCombo;
         }
     }
 }

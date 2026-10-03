@@ -26,12 +26,25 @@ public class LevelSelect extends javax.swing.JPanel {
     private Main main;
     private Options options;
     private String selectedLevel;
+    private Services.Database database;
+
+    public void setDatabase(Services.Database database) {
+        this.database = database;
+    }
     
     /**
      * Creates new form LevelSelect
      */
     public LevelSelect() {
         initComponents();
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                if (selectedLevel != null) {
+                    updateLeaderboard(selectedLevel); 
+                }
+            }
+        });
     }
 
     /**
@@ -369,6 +382,30 @@ public class LevelSelect extends javax.swing.JPanel {
         Color clr = options.getBgColor();
         comp.setBackground(clr);
     }//GEN-LAST:event_hoverRemovedMouse
+    public void updateLeaderboard(String levelName) {
+        if (database == null || levelName == null) return;
+        
+        // Group the labels into an array so we can loop through them easily
+        App.Components.CustomLabel[] topLabels = {
+            top1, top2, top3, top4, top5, top6, top7, top8, top9, top10
+        };
+        
+        // Clear previous scores
+        for (App.Components.CustomLabel lbl : topLabels) {
+            lbl.setText("");
+        }
+        
+        int songId = database.getSongIdByName(levelName);
+        if (songId != -1) {
+            java.util.List<Services.Database.LeaderboardEntry> entries = database.getLeaderboardForSong(songId);
+            
+            // Loop up to 10 times, or however many scores exist
+            for (int i = 0; i < entries.size() && i < 10; i++) {
+                Services.Database.LeaderboardEntry entry = entries.get(i);
+                topLabels[i].setText((i + 1) + ". " + entry.username + " - " + entry.score + " pts (" + entry.maxCombo + "x Combo)");
+            }
+        }
+    }
 
     private void levelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMousePressed
         // TODO add your handling code here:
@@ -384,7 +421,7 @@ public class LevelSelect extends javax.swing.JPanel {
         } else if (evt.getSource() == level5) {
             selectedLevel = extractText(level5);
         }
-        
+        updateLeaderboard(selectedLevel);
         enableComponents(true);
     }//GEN-LAST:event_levelMousePressed
         
@@ -399,15 +436,22 @@ public class LevelSelect extends javax.swing.JPanel {
     private void controlsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_controlsBtnActionPerformed
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(masterPanel, "Left Arrow Key -> Biodegradable\n"
-                + "Down Arrow Key -> Recyclable\n"
-                + "Up Arrow Key -> Hazardous\n"
-                + "Right Arrow Key -> Residual / General Waste", "Controls", JOptionPane.INFORMATION_MESSAGE);
+            + "Down Arrow Key -> Recyclable\n"
+            + "Up Arrow Key -> Hazardous\n"
+            + "Right Arrow Key -> Residual / General Waste\n"
+            + "Q - Fertilizer Power Up\n"
+            + "W - Material Shield Power Up\n"
+            + "E - Purge Power Up\n"
+            + "R - Incinerate Power Up", "Controls", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_controlsBtnActionPerformed
 
     private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-        // TODO add your handling code here:
-        // TODO: add code here to show what types of keys you need to press for what
-        JOptionPane.showMessageDialog(masterPanel, "Add content later.", "Help", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(masterPanel, 
+            "Apple core, withered leaf, eggshells, fish bone, banana peel -> Left Arrow Key (Biodegradable)\n"
+            + "Aluminum can, glass jars and bottles, newspaper, plastic bottles -> Down Arrow Key (Recyclable)\n"
+            + "AA battery, fluorescent lightbulb, insecticide aerosol can -> Up Arrow Key (Hazardous)\n"
+            + "TBA -> Right Arrow Key (Residual / General Waste)", 
+            "Help - Trash Guide", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_customButton1ActionPerformed
 
     private void difficultyRBItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_difficultyRBItemStateChanged

@@ -32,9 +32,11 @@ public class Main extends javax.swing.JFrame {
         optionsPanel1.setOptions(options);
         playPanel1.setMasterPanel(masterPanel);
         playPanel1.setOptions(options);
+        playPanel1.setDatabase(database);
         levelSelect1.setMasterPanel(masterPanel);
         levelSelect1.setOptions(options);
         levelSelect1.setMain(this);
+        levelSelect1.setDatabase(database);
     }
 
     /**
