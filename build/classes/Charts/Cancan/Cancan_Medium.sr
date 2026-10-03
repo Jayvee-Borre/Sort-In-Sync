@@ -1,0 +1,39 @@
+[METADATA]
+title="Cancan - Medium"
+bpm=88
+audioFile="Cancan.wav"
+offsetMs=0
+
+// <beatTimeInMs>,<correctKeyBindMap>
+// keys -> L = left, D = down, U = up, R = right
+
+[NOTES]
+1000,L
+2364,R
+3727,D
+5091,U
+6455,L
+7818,D
+9182,R
+10545,U
+11909,L
+13273,R
+14636,D
+16000,U
+17364,L
+18727,D
+20091,R
+21455,U
+22818,L
+24182,R
+25545,D
+26909,U
+28273,L
+29636,D
+31000,R
+32364,U
+33727,L
+35091,R
+36455,D
+37818,U
+38364,U

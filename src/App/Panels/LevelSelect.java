@@ -16,6 +16,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
+import Services.Database;
+import java.util.List;
 
 /**
  *
@@ -26,6 +28,7 @@ public class LevelSelect extends javax.swing.JPanel {
     private Main main;
     private Options options;
     private String selectedLevel;
+    private final Database db = new Database();
     
     /**
      * Creates new form LevelSelect
@@ -386,6 +389,7 @@ public class LevelSelect extends javax.swing.JPanel {
         }
         
         enableComponents(true);
+        loadLeaderboard(selectedLevel);
     }//GEN-LAST:event_levelMousePressed
         
     private void levelMouseRelease(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_levelMouseRelease
@@ -419,6 +423,7 @@ public class LevelSelect extends javax.swing.JPanel {
         bGroup1.clearSelection();
         enableComponents(false);
         enableComponent(playBtn, false);
+        clearLeaderboard();
     }
     
     private void panelIsClicked(MouseEvent evt) {
@@ -454,7 +459,27 @@ public class LevelSelect extends javax.swing.JPanel {
         }
         return null;
     }
-    
+   
+    // Fills top1..top10 with the best scores for the given song title
+    private void loadLeaderboard(String songTitle) {
+        clearLeaderboard();
+        if (songTitle == null) return;
+
+        List<Database.LeaderboardEntry> entries = db.getLeaderboardForTitle(songTitle);
+        CustomLabel[] rows = {top1, top2, top3, top4, top5, top6, top7, top8, top9, top10};
+        for (int i = 0; i < rows.length && i < entries.size(); i++) {
+            Database.LeaderboardEntry e = entries.get(i);
+            rows[i].setText((i + 1) + ". " + e.username + "  -  " + e.score);
+        }
+    }
+
+    private void clearLeaderboard() {
+        CustomLabel[] rows = {top1, top2, top3, top4, top5, top6, top7, top8, top9, top10};
+        for (CustomLabel row : rows) {
+            row.setText("");
+        }
+    }
+
     private void swapCard(JComponent comp, String name) {
         CardLayout card = (CardLayout) comp.getLayout();
         card.show(comp, name);

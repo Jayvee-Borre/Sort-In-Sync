@@ -1,0 +1,25 @@
+[METADATA]
+title="Cancan - Easy"
+bpm=88
+audioFile="Cancan.wav"
+offsetMs=0
+
+// <beatTimeInMs>,<correctKeyBindMap>
+// keys -> L = left, D = down, U = up, R = right
+
+[NOTES]
+1000,L
+3727,D
+6455,L
+9182,R
+11909,L
+14636,D
+17364,L
+20091,R
+22818,L
+25545,D
+28273,L
+31000,R
+33727,L
+36455,D
+38364,D

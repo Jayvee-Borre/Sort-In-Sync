@@ -20,6 +20,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import Services.Database;
 
 /**
  *
@@ -58,6 +59,12 @@ public class PlayPanel extends javax.swing.JPanel {
     private int HIT_WINDOW = 300;
     private JComponent masterPanel;
     private Clip songClip;
+    
+    // Database
+    private final Database db = new Database();
+    private String currentUser = "guest";
+    private String currentLevel;
+    
     private final ImageIcon[] bioAssets = {
         new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/apple_core.png")),
         new ImageIcon(getClass().getResource("/Assets/wastes/bio_trash/withered_leaf.png")),

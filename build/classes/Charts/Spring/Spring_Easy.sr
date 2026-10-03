@@ -1,0 +1,33 @@
+[METADATA]
+title="Spring - Easy"
+bpm=75
+audioFile="Spring.wav"
+offsetMs=0
+
+// <beatTimeInMs>,<correctKeyBindMap>
+// keys -> L = left, D = down, U = up, R = right
+
+[NOTES]
+1000,L
+4200,D
+7400,R
+10600,U
+13800,L
+17000,D
+20200,R
+23400,U
+26600,L
+29800,D
+33000,R
+36200,U
+39400,L
+42600,D
+45800,R
+49000,U
+52200,L
+55400,D
+58600,R
+61800,U
+65000,L
+68200,D
+69600,D

@@ -284,7 +284,8 @@ public class Database {
         List<LeaderboardEntry> entries = new ArrayList<>();
         String sql = "SELECT u.Username, l.Score FROM Leaderboard l " +
                      "JOIN User u ON l.UserID = u.UserID " +
-                     "WHERE l.SongID = ? ORDER BY l.Score DESC";
+                     "WHERE l.SongID = ? ORDER BY l.Score DESC LIMIT 10";
+        
         try (Connection conn = connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, songId);
@@ -296,7 +297,14 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
         return entries;
+    }
+    
+    public List<LeaderboardEntry> getLeaderboardForTitle(String title) {
+        int songId = getSongId(title);
+        if (songId == -1) return new ArrayList<>();
+        return getLeaderboardForSong(songId);
     }
     
     // ------------------------------------------------------------------
@@ -306,50 +314,88 @@ public class Database {
     // Safe to call every startup: only seeds if the User table is empty,
     // so it never throws a UNIQUE-constraint error on repeat runs.
     public void createDummyData() {
-        String checkSql = "SELECT COUNT(*) FROM User";
+    System.out.println("Seeding dummy data...");
+
+    String[][] users = {
+        {"eco_ace", "leaf123"},
+        {"recycle_rio", "binit456"},
+        {"guest", "guestpass"},
+        {"green_gus", "plant789"},
+        {"compost_cat", "peel321"},
+        {"bin_boss", "trash654"},
+        {"sorter_sam", "sort987"},
+        {"reuse_ruby", "again111"},
+        {"plastic_pete", "bottle222"},
+        {"paper_pam", "fold333"},
+        {"glass_gina", "shine444"},
+        {"metal_max", "can555"}
+    };
+    int[] scores = {9850, 9420, 8700, 8150, 7600, 7200, 6900, 6400, 5800, 5100, 4300, 3500};
+
+    int[] ids = new int[users.length];
+    for (int i = 0; i < users.length; i++) {
+        if (getUserId(users[i][0]) == -1) {
+            registerUser(users[i][0], users[i][1]);
+        }
+        ids[i] = getUserId(users[i][0]);
+    }
+
+    if (ids[0] != -1 && getUserOptions(ids[0]) == null) saveUserOptions(ids[0], "1280x720", "Dark", "SansSerif", 70);
+    if (ids[1] != -1 && getUserOptions(ids[1]) == null) saveUserOptions(ids[1], "1024x768", "Light", "SansSerif", 50);
+    if (ids[2] != -1 && getUserOptions(ids[2]) == null) saveUserOptions(ids[2], "800x600", "Light", "Monospaced", 40);
+
+        // Titles must match the level labels in LevelSelect exactly.
+    // Only Canon has real files so far; the rest are placeholders.
+    String[][] songs = {
+        {"Canon", "126", "Songs/Canon.mp3", "Charts/Canon.sr"},
+        {"CanCan", "120", "Songs/CanCan.mp3", "Charts/CanCan.sr"},
+        {"TwoTigers", "120", "Songs/TwoTigers.mp3", "Charts/TwoTigers.sr"},
+        {"Spring", "120", "Songs/Spring.mp3", "Charts/Spring.sr"},
+        {"BeyerNo8", "120", "Songs/BeyerNo8.mp3", "Charts/BeyerNo8.sr"}
+    };
+
+    for (int s = 0; s < songs.length; s++) {
+        int songId = getSongId(songs[s][0]);
+        if (songId == -1) {
+            songId = insertSong(songs[s][0], Integer.parseInt(songs[s][1]), songs[s][2], songs[s][3]);
+        }
+        if (songId != -1 && countScoresForSong(songId) == 0) {
+            for (int i = 0; i < ids.length; i++) {
+                if (ids[i] != -1) recordScore(ids[i], songId, scores[(i + s) % scores.length]);
+            }
+        }
+    }
+
+    System.out.println("Dummy data seeded.");
+    }
+    
+    // Added two private helper methods
+    private int getSongId(String title) {
+    String sql = "SELECT SongID FROM Song WHERE Title = ?";
+    try (Connection conn = connect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, title);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt("SongID");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return -1;
+}
+
+    private int countScoresForSong(int songId) {
+        String sql = "SELECT COUNT(*) FROM Leaderboard WHERE SongID = ?";
         try (Connection conn = connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(checkSql)) {
-            if (rs.next() && rs.getInt(1) > 0) {
-                System.out.println("Dummy data already present, skipping seed.");
-                return;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, songId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return;
         }
-
-        System.out.println("Seeding dummy data...");
-
-        // 3 users (plaintext passwords, matches current registerUser/validateLogin scheme)
-        registerUser("eco_ace", "leaf123");
-        registerUser("recycle_rio", "binit456");
-        registerUser("guest", "guestpass");
-
-        int u1 = getUserId("eco_ace");
-        int u2 = getUserId("recycle_rio");
-        int u3 = getUserId("guest");
-
-        // 3 distinct settings profiles, using values Options.java actually accepts
-        saveUserOptions(u1, "1280x720", "Dark", "SansSerif", 70);
-        saveUserOptions(u2, "1024x768", "Light", "SansSerif", 50);
-        saveUserOptions(u3, "800x600", "Light", "Monospaced", 40);
-
-        // Real song: matches Charts/Canon.sr + Songs/Canon.mp3 exactly
-        int canonId = insertSong("Canon", 126, "Songs/Canon.mp3", "Charts/Canon.sr");
-
-        // NOTE: placeholder second song — WasteWarrior.mp3/.sr do NOT exist yet.
-        // Remove or replace once a real second chart is added; don't let the
-        // game try to load this one until then.
-        int placeholderId = insertSong("Waste Warrior", 140, "Songs/WasteWarrior.mp3", "Charts/WasteWarrior.sr");
-
-        // A few leaderboard rows, mostly on the real song
-        recordScore(u1, canonId, 9850);
-        recordScore(u2, canonId, 8700);
-        recordScore(u3, canonId, 6400);
-        recordScore(u1, placeholderId, 5000);
-
-        System.out.println("Dummy data seeded.");
+        return 0;
     }
     
     // ------------------------------------------------------------------
