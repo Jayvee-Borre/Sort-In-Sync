@@ -37,7 +37,6 @@ public class PlayPanel extends javax.swing.JPanel {
     private boolean shouldIncinerate;
     private int incinerateCount = 0;
     private long incineratorEndTime = 0;
-    
     private final int MAX_BIN_CAPACITY = 10;
     private int[] binCapacity = {0,0,0,0};
     private int currentKey = 0; // this should represent UDLR
@@ -56,6 +55,7 @@ public class PlayPanel extends javax.swing.JPanel {
     private int maxCombo = 0;
     
     // Timer and Notes
+    private java.awt.Image bgImage;
     private Options options;
     private Timer dt;
     private Timer infoTimer;
@@ -84,9 +84,15 @@ public class PlayPanel extends javax.swing.JPanel {
         new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/AA_Battery.png")),
         new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Fluorescent_Lightbulb.png")),
         new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Insecticide_Aerosol_Can.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Prescription_Pill_Bottle.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Old_Television.png"))
     };
     private final ImageIcon[] residualAssets = {
-       new ImageIcon(getClass().getResource("/Assets/wastes/hazardous_trash/Prescription_Pill_Bottle.png")) // Switch to hazard this is only for placeholder
+        new ImageIcon(getClass().getResource("/Assets/wastes/residual_trash/broken_mug.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/residual_trash/chip_bag.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/residual_trash/greasy_pizza_box.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/residual_trash/old_toothbrush.png")),
+        new ImageIcon(getClass().getResource("/Assets/wastes/residual_trash/used_diaper.png"))
     };
     
     private final ImageIcon[] binAssets = {

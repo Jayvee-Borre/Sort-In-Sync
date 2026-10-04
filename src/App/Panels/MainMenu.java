@@ -76,7 +76,7 @@ public class MainMenu extends javax.swing.JPanel {
         titlePanel.setLayout(new java.awt.BorderLayout());
 
         customLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo.png"))); // NOI18N
+        customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo_Large.png"))); // NOI18N
         customLabel1.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         titlePanel.add(customLabel1, java.awt.BorderLayout.CENTER);
 
