@@ -12,6 +12,7 @@ import Lib.Options;
 import java.awt.CardLayout;
 import java.beans.Beans;
 import javax.swing.JComponent;
+
 /**
  *
  * @author Jayvee
@@ -21,24 +22,44 @@ public class MainMenu extends javax.swing.JPanel {
     private JComponent masterPanel;
     private Options options; // Set by Main; used to save settings for the logged-in user
     private static final System.Logger LOG = System.getLogger(MainMenu.class.getName());
+
     /**
      * Creates new form MainMenu
      */
     public MainMenu() {
         initComponents();
-        
+
         if (!Beans.isDesignTime()) {
             database = new Database();
         }
+        
+        scaleLogoImage();
     }
 
     public void setMasterPanel(JComponent masterPanel) {
         this.masterPanel = masterPanel;
     }
-    
+
     public void setOptions(Options options) {
         this.options = options;
     }
+    
+    private void scaleLogoImage() {
+        try {
+            String logoPath = "/Assets/Menu Screen/Classic/Logo.png";
+            javax.swing.ImageIcon rawIcon = new javax.swing.ImageIcon(getClass().getResource(logoPath));
+
+            java.awt.Image scaledImage = rawIcon.getImage().getScaledInstance(280, 280, java.awt.Image.SCALE_FAST);
+
+            customLabel1.setIcon(new javax.swing.ImageIcon(scaledImage));
+            customLabel1.setText(""); 
+        } catch (Exception e) {
+            System.out.println("[Asset Error]: Could not load logo image for scaling.");
+        }
+    }
+    
+    
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,6 +69,7 @@ public class MainMenu extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new javax.swing.JPanel();
         titlePanel = new javax.swing.JPanel();
@@ -70,7 +92,7 @@ public class MainMenu extends javax.swing.JPanel {
         mainPanel.setBackground(new java.awt.Color(199, 36, 44));
         mainPanel.setToolTipText("");
         mainPanel.setFocusable(false);
-        mainPanel.setLayout(new java.awt.GridLayout(2, 1));
+        mainPanel.setLayout(new java.awt.GridBagLayout());
 
         titlePanel.setBackground(new java.awt.Color(199, 36, 44));
         titlePanel.setLayout(new java.awt.BorderLayout());
@@ -78,55 +100,80 @@ public class MainMenu extends javax.swing.JPanel {
         customLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo_Large.png"))); // NOI18N
         customLabel1.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
+        customLabel1.setMaximumSize(new java.awt.Dimension(239, 239));
+        customLabel1.setMinimumSize(new java.awt.Dimension(239, 239));
+        customLabel1.setPreferredSize(new java.awt.Dimension(239, 239));
         titlePanel.add(customLabel1, java.awt.BorderLayout.CENTER);
 
-        mainPanel.add(titlePanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 25, 10, 25);
+        mainPanel.add(titlePanel, gridBagConstraints);
 
         menuButtonsPanel.setBackground(new java.awt.Color(199, 36, 44));
+        menuButtonsPanel.setLayout(new java.awt.GridBagLayout());
 
         buttonPanel.setBackground(new java.awt.Color(199, 36, 44));
-        buttonPanel.setLayout(new java.awt.GridLayout(4, 1, 10, 10));
+        buttonPanel.setLayout(new java.awt.GridLayout(3, 1, 10, 15));
 
-        playBtn.setText("PLAY");
+        playBtn.setText("Play");
+        playBtn.setBorderPainted(false);
         playBtn.setFocusable(false);
         playBtn.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        playBtn.setMaximumSize(new java.awt.Dimension(142, 37));
+        playBtn.setMinimumSize(new java.awt.Dimension(142, 37));
+        playBtn.setPreferredSize(new java.awt.Dimension(142, 37));
         playBtn.addActionListener(this::playPerformed);
         buttonPanel.add(playBtn);
 
-        optionsBtn.setText("OPTIONS");
+        optionsBtn.setText("Options");
         optionsBtn.setFocusable(false);
         optionsBtn.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        optionsBtn.setMaximumSize(new java.awt.Dimension(142, 37));
+        optionsBtn.setMinimumSize(new java.awt.Dimension(142, 37));
+        optionsBtn.setPreferredSize(new java.awt.Dimension(142, 37));
         optionsBtn.addActionListener(this::optionPerformed);
         buttonPanel.add(optionsBtn);
 
-        exitBtn.setText("EXIT");
+        exitBtn.setText("Exit");
         exitBtn.setFocusable(false);
         exitBtn.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        exitBtn.setMaximumSize(new java.awt.Dimension(142, 37));
+        exitBtn.setMinimumSize(new java.awt.Dimension(142, 37));
+        exitBtn.setPreferredSize(new java.awt.Dimension(142, 37));
         exitBtn.addActionListener(this::exitPerformed);
         buttonPanel.add(exitBtn);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(15, 0, 0, 0);
+        menuButtonsPanel.add(buttonPanel, gridBagConstraints);
+
         bottomPanel.setBackground(new java.awt.Color(199, 36, 44));
-        bottomPanel.setLayout(new java.awt.CardLayout());
+        bottomPanel.setLayout(new java.awt.CardLayout(15, 15));
 
         loggedOut.setBackground(new java.awt.Color(199, 36, 44));
-        loggedOut.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        loggedOut.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 0));
 
-        loginBtn.setText("LOGIN");
+        loginBtn.setText("Sign up");
         loginBtn.setFocusable(false);
         loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        loginBtn.setPreferredSize(new java.awt.Dimension(73, 28));
         loginBtn.addActionListener(this::loginActionPerformed);
         loggedOut.add(loginBtn);
 
-        signUpBtn.setText("SIGN UP");
+        signUpBtn.setText("Login");
         signUpBtn.setFocusable(false);
         signUpBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signUpBtn.setPreferredSize(new java.awt.Dimension(73, 28));
         signUpBtn.addActionListener(this::loginActionPerformed);
         loggedOut.add(signUpBtn);
 
         bottomPanel.add(loggedOut, "loggedOut");
 
         loggedIn.setBackground(new java.awt.Color(199, 36, 44));
-        loggedIn.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         userText.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         loggedIn.add(userText);
@@ -139,11 +186,18 @@ public class MainMenu extends javax.swing.JPanel {
 
         bottomPanel.add(loggedIn, "loggedIn");
 
-        buttonPanel.add(bottomPanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.ABOVE_BASELINE;
+        menuButtonsPanel.add(bottomPanel, gridBagConstraints);
 
-        menuButtonsPanel.add(buttonPanel);
-
-        mainPanel.add(menuButtonsPanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.insets = new java.awt.Insets(10, 25, 10, 25);
+        mainPanel.add(menuButtonsPanel, gridBagConstraints);
 
         add(mainPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents

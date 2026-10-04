@@ -97,10 +97,10 @@ public class PlayPanel extends javax.swing.JPanel {
     };
     
     private final ImageIcon[] binAssets = {
-        new ImageIcon(getClass().getResource("/Assets/bins/biodegradable_bin.png")),
-        new ImageIcon(getClass().getResource("/Assets/bins/hazardous_bin.png")),
-        new ImageIcon(getClass().getResource("/Assets/bins/recyclable_bin.png")),
-        new ImageIcon(getClass().getResource("/Assets/bins/residual_bin.png"))
+        loadAndScaleIcon("/Assets/bins/biodegradable_bin.png", 219, 113),
+        loadAndScaleIcon("/Assets/bins/hazardous_bin.png", 219, 113),
+        loadAndScaleIcon("/Assets/bins/recyclable_bin.png", 219, 113),
+        loadAndScaleIcon("/Assets/bins/residual_bin.png", 219, 113)
     };
     private Services.Database database;
     private String currentLevelName; // Remembers what level is being played
@@ -213,6 +213,23 @@ public class PlayPanel extends javax.swing.JPanel {
     
     public void setMasterPanel(JComponent masterPanel) {
         this.masterPanel = masterPanel;
+    }
+    
+    private ImageIcon loadAndScaleIcon(String path, int width, int height) {
+        try {
+            java.net.URL imgURL = getClass().getResource(path);
+            if (imgURL != null) {
+                ImageIcon rawIcon = new ImageIcon(imgURL);
+                java.awt.Image scaledImage = rawIcon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_FAST);
+                return new ImageIcon(scaledImage);
+            } else {
+                System.out.println("[Asset Error]: Could not find bin asset at " + path);
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("[Asset Error]: Failed to scale bin icon at " + path);
+            return null;
+        }
     }
 
     /**

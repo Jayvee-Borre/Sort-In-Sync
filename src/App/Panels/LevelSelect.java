@@ -102,17 +102,17 @@ public class LevelSelect extends javax.swing.JPanel {
         topPanel.setFocusable(false);
         topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        backBtn.setText("BACK");
+        backBtn.setText("Back");
         backBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         backBtn.addActionListener(this::backPerformed);
         topPanel.add(backBtn);
 
-        controlsBtn.setText("CONTROLS");
+        controlsBtn.setText("Controls");
         controlsBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         controlsBtn.addActionListener(this::controlsBtnActionPerformed);
         topPanel.add(controlsBtn);
 
-        customButton1.setText("HELP");
+        customButton1.setText("Help");
         customButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         customButton1.addActionListener(this::customButton1ActionPerformed);
         topPanel.add(customButton1);
@@ -319,7 +319,7 @@ public class LevelSelect extends javax.swing.JPanel {
 
         settingsPanel.add(jPanel1);
 
-        playBtn.setText("PLAY");
+        playBtn.setText("Play");
         playBtn.setEnabled(false);
         playBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         playBtn.addActionListener(this::playButtonPressed);
