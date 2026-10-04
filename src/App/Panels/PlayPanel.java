@@ -355,6 +355,8 @@ public class PlayPanel extends javax.swing.JPanel {
 
         upcomingPanel.setBackground(new java.awt.Color(199, 36, 44));
         upcomingPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         upcomingPanel.add(jLabel6, java.awt.BorderLayout.CENTER);
 
         hitboxPanel.add(upcomingPanel);
@@ -362,6 +364,8 @@ public class PlayPanel extends javax.swing.JPanel {
         currentPanel.setBackground(new java.awt.Color(199, 36, 44));
         currentPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51)));
         currentPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         currentPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
 
         hitboxPanel.add(currentPanel);
