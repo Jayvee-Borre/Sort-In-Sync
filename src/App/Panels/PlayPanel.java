@@ -9,6 +9,7 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import javax.sound.sampled.FloatControl;
 import Lib.Options;
+import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -120,6 +121,8 @@ public class PlayPanel extends javax.swing.JPanel {
     
     public PlayPanel() {
         initComponents();
+        integrateBg();
+        changeTextColor();
         
         this.setFocusable(true);
         
@@ -129,6 +132,79 @@ public class PlayPanel extends javax.swing.JPanel {
                 PlayPanel.this.requestFocusInWindow();
             }
         });
+    }
+    
+    @Override
+    protected void paintComponent(java.awt.Graphics g) {
+        super.paintComponent(g);
+        if (bgImage != null) {
+            g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+            
+            g.setColor(new Color(0, 0, 0, 120)); 
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+    
+    private void changeTextColor() {
+        java.awt.Color textColor = java.awt.Color.WHITE; 
+
+        healthLabelTitle.setForeground(textColor);
+        healthLabelText.setForeground(textColor);
+        comboLabelTitle.setForeground(textColor);
+        comboLabelScore.setForeground(textColor);
+        comboLabelTitle1.setForeground(textColor);
+        totalScoreLabel.setForeground(textColor);
+        bincapLabelTitle.setForeground(textColor);
+        bincapLabelText.setForeground(textColor);
+
+        powerUpOneTitle.setForeground(textColor);
+        powerUpOneText.setForeground(textColor);
+        powerUpTwoTitle.setForeground(textColor);
+        powerUpTwoText.setForeground(textColor);
+        powerUpThreeTitle.setForeground(textColor);
+        powerUpThreeText.setForeground(textColor);
+        powerUpFourTitle.setForeground(textColor);
+        powerUpFourText.setForeground(textColor);
+
+        textInfoLabel.setForeground(textColor);
+    }
+    
+    private void integrateBg() {
+        try {
+            bgImage = new ImageIcon(getClass().getResource("/Assets/game_screen/game_background.png")).getImage();
+        } catch (Exception e) {
+            System.out.println("Background image not found.");
+        }
+        
+        this.setOpaque(true);
+        gameplayPanel.setOpaque(false);
+        goBackPanel.setOpaque(false);
+        mainGameplayPanel.setOpaque(false);
+        hitboxPanel.setOpaque(false);
+        binPanel.setOpaque(false);
+        
+        comboPanel.setOpaque(false);
+        hpPanel.setOpaque(false);
+        comboScorePanel.setOpaque(false);
+        totalScorePanel.setOpaque(false);
+        binCapacityPanel.setOpaque(false);
+        jPanel2.setOpaque(false); 
+        
+        powerupPanel.setOpaque(false);
+        powerup1Panel.setOpaque(false);
+        powerup2Panel.setOpaque(false);
+        powerup3Panel.setOpaque(false);
+        powerup4Panel.setOpaque(false);
+        
+        upcomingPanel.setOpaque(false);
+        textInfoPanel.setOpaque(false);
+        //currentPanel.setBackground(new Color(0, 0, 0, 150)); 
+        currentPanel.setOpaque(false);
+        jLabel6.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jLabel7.setVerticalAlignment(javax.swing.SwingConstants.CENTER);
+        textInfoLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        
+        this.setFocusable(true);
     }
     
     public void setOptions(Options options) {
@@ -738,9 +814,9 @@ public class PlayPanel extends javax.swing.JPanel {
 
                     // visual indicator for time to hit
                     if (Math.abs(timeToNote) <= HIT_WINDOW) {
-                        currentPanel.setBackground(new java.awt.Color(50, 205, 50)); 
+                        currentPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(50, 205, 50), 3)); // Thick Green Border
                     } else {
-                        currentPanel.setBackground(new java.awt.Color(199, 36, 44)); 
+                        currentPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51), 1)); // Thin Yellow Border
                     }
 
                     // Player missed
@@ -757,7 +833,7 @@ public class PlayPanel extends javax.swing.JPanel {
                         }
 
                         currentNoteIndex++;
-                        currentPanel.setBackground(new java.awt.Color(199, 36, 44)); // Reset on miss
+                        currentPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51), 1)); // Reset on miss
                         updateConveyor();
                     }
                 } else if (notes != null && currentNoteIndex >= notes.size()) { //  No more notes to load
