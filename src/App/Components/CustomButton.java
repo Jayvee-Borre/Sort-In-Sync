@@ -4,6 +4,7 @@
  */
 package App.Components;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,6 +17,9 @@ import javax.swing.JButton;
  * @author Jayvee
  */
 public class CustomButton extends JButton {
+    
+    private boolean isApplyingCustomFont = false;
+    
     public boolean isHover() {
         return hover;
     }
@@ -65,8 +69,23 @@ public class CustomButton extends JButton {
     public void setRadius(int radius) {
         this.radius = radius;
     }
+    
+    @Override
+    public void setFont(Font font) {
+        if (isApplyingCustomFont) {
+            super.setFont(font);
+            return;
+        }
 
+        isApplyingCustomFont = true;
+        float size = (font != null) ? font.getSize2D() : 16f;
+        super.setFont(FontLoader.getPixelFont(size));
+        isApplyingCustomFont = false;
+    }
+    
     public CustomButton() {
+        setFont(FontLoader.getPixelFont(16f));
+        
         setColor(Color.decode("#F1D42D"));       // Classic accent fill
         colorHover = getColor().brighter();      // lighter tint of the fill
         colorClicked = Color.decode("#794F05");  // Classic accent pressed/bevel
