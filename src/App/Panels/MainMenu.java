@@ -98,7 +98,7 @@ public class MainMenu extends javax.swing.JPanel {
         titlePanel.setLayout(new java.awt.BorderLayout());
 
         customLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo_Large.png"))); // NOI18N
+        customLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Assets/Menu Screen/Classic/Logo.png"))); // NOI18N
         customLabel1.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         customLabel1.setMaximumSize(new java.awt.Dimension(239, 239));
         customLabel1.setMinimumSize(new java.awt.Dimension(239, 239));
@@ -157,14 +157,14 @@ public class MainMenu extends javax.swing.JPanel {
         loggedOut.setBackground(new java.awt.Color(199, 36, 44));
         loggedOut.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 0));
 
-        loginBtn.setText("Sign up");
+        loginBtn.setText("Login");
         loginBtn.setFocusable(false);
         loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         loginBtn.setPreferredSize(new java.awt.Dimension(73, 28));
         loginBtn.addActionListener(this::loginActionPerformed);
         loggedOut.add(loginBtn);
 
-        signUpBtn.setText("Login");
+        signUpBtn.setText("Sign up");
         signUpBtn.setFocusable(false);
         signUpBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         signUpBtn.setPreferredSize(new java.awt.Dimension(73, 28));

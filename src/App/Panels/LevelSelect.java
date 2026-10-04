@@ -450,7 +450,7 @@ public class LevelSelect extends javax.swing.JPanel {
             "Apple core, withered leaf, eggshells, fish bone, banana peel -> Left Arrow Key (Biodegradable)\n"
             + "Aluminum can, glass jars and bottles, newspaper, plastic bottles -> Down Arrow Key (Recyclable)\n"
             + "AA battery, fluorescent lightbulb, insecticide aerosol can -> Up Arrow Key (Hazardous)\n"
-            + "TBA -> Right Arrow Key (Residual / General Waste)", 
+            + "Broken Mug, Chip Bag, Greasy Pizza Box, Old Toothbrush, Used diaper -> Right Arrow Key (Residual / General Waste)", 
             "Help - Trash Guide", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_customButton1ActionPerformed
 
