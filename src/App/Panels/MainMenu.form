@@ -209,7 +209,7 @@
                   <SubComponents>
                     <Component class="App.Components.CustomButton" name="loginBtn">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Sign up"/>
+                        <Property name="text" type="java.lang.String" value="Login"/>
                         <Property name="focusable" type="boolean" value="false"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="12" style="1"/>
@@ -224,7 +224,7 @@
                     </Component>
                     <Component class="App.Components.CustomButton" name="signUpBtn">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Login"/>
+                        <Property name="text" type="java.lang.String" value="Sign up"/>
                         <Property name="focusable" type="boolean" value="false"/>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="12" style="1"/>

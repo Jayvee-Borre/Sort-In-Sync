@@ -447,10 +447,10 @@ public class LevelSelect extends javax.swing.JPanel {
 
     private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
         JOptionPane.showMessageDialog(masterPanel, 
-            "Apple core, withered leaf, eggshells, fish bone, banana peel -> Left Arrow Key (Biodegradable)\n"
-            + "Aluminum can, glass jars and bottles, newspaper, plastic bottles -> Down Arrow Key (Recyclable)\n"
-            + "AA battery, fluorescent lightbulb, insecticide aerosol can -> Up Arrow Key (Hazardous)\n"
-            + "Broken Mug, Chip Bag, Greasy Pizza Box, Old Toothbrush, Used diaper -> Right Arrow Key (Residual / General Waste)", 
+            "Green (Biodegradable): food scraps, garden/yard waste\n"
+            + "Blue (Recyclable): clean plastic, glass, metal, cans, dry paper & cardboard\n"
+            + "Red (Hazardous): chemicals, batteries, busted lamps, expired medicine, e-waste\n"
+            + "Black (Residual): mixed waste, soiled packaging, sanitary waste, broken ceramic/glass", 
             "Help - Trash Guide", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_customButton1ActionPerformed
 
