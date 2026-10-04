@@ -146,6 +146,10 @@ public class Options {
     }
     
     private void applyTheme(java.awt.Container container, Theme theme) {
+        if (container instanceof App.Panels.PlayPanel) {
+            return;
+        }
+        
         container.setBackground(theme.getBgColor());
         container.setForeground(theme.getFgColor());
         
